@@ -1,0 +1,14 @@
+import {DataTypes} from "sequelize"
+import { sequelize } from "../config/databases"
+
+export const Products = sequelize.define(
+    "sequelize",
+    {
+        nombre:{type: DataTypes.STRING, allowNull: false},
+        codigo: {type: DataTypes.STRING, allowNull: false, unique: true},
+        categoria: {type: DataTypes.STRING},
+        precio: {type: DataTypes.DECIMAL(10,2), allowNull: false},
+        stock: {type: DataTypes.INTEGER, defaultValue: 0}
+    },
+    {timestamps: true}
+)

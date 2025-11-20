@@ -1,0 +1,38 @@
+import { User } from "./UserModels.js"
+import { Provider } from "./ProviderModels.js"
+import { Products } from "./ProducsModels.js"
+import { InventoryMovement } from "./InventoryMovementModels.js"
+import { Sale } from "./SaleModels.js"
+import { SaleItem } from "./SaleItemModels"
+
+//!relaciones de las tablas 
+
+//Provider 1:N Products
+Provider.hasMany(Products, {foreignKey: "proveedor_id"})
+Products.belongsTo(Provider, {foreignKey: "proveedor_id"})
+
+//Products 1:N InventoryMovement
+Products.hasMany(InventoryMovement, {foreignKey: "producto_id"})
+InventoryMovement.belongsTo(Products, {foreignKey: "producto_id"})
+
+//User 1:N InventoryMovement
+User.hasMany(InventoryMovement, {foreignKey: "usuario_id"})
+InventoryMovement.belongsTo(User, {foreignKey: "usuario_id"})
+
+//User 1:N Sale
+User.hasMany(Sale, {foreignKey: "usuario_id"})
+Sale.belongsTo(User, {foreignKey: "usuario_id"})
+
+//Products 1:N SaleItem
+Products.hasMany(SaleItem, {foreignKey: "producto_id"})
+SaleItem.belongsTo(Products, {foreignKey: "producto_id"})
+
+
+export default {
+    User,
+    Provider,
+    Products,
+    InventoryMovement,
+    Sale,
+    SaleItem
+}; 
