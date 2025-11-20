@@ -3,7 +3,7 @@ import { Provider } from "./ProviderModels.js"
 import { Products } from "./ProducsModels.js"
 import { InventoryMovement } from "./InventoryMovementModels.js"
 import { Sale } from "./SaleModels.js"
-import { SaleItem } from "./SaleItemModels"
+import { SaleItem } from "./SaleItemModels.js"
 
 //!relaciones de las tablas 
 
