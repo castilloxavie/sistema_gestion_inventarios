@@ -6,7 +6,7 @@ dotenv.config()
 
 class AuthServices {
     async register(data){
-        const {nombre, apellido, email, password} = data
+        const {nombre, apellido, email, password, rol = "vendedor"} = data
 
         //buscar si ya existe
         const userExist = await User.findOne({where: {email}})
@@ -21,7 +21,7 @@ class AuthServices {
             apellido,
             email,
             password: hashearPassword,
-            rol: "vendedor"
+            rol
         })
         return user
     }
