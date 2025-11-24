@@ -66,10 +66,10 @@ class UserController {
     }
 
 
-    async delete(req, res){
+async delete(req, res){
 
         try {
-            const user = await UserServices.delete(req.parmas.id)
+            const user = await UserServices.delete(req.params.id)
             console.log("Usuario eliminado correctamente:", user);
             res.json(user)
 

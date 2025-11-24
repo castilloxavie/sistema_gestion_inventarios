@@ -4,7 +4,7 @@ import { authMiddleware } from "../auth/authMiddleware.js"
 import { roleMiddleware } from "../../middlewares/roleMiddlewares.js"
 
 const router = express.Router()
-const controller = new UserController()
+const controller = UserController
 
 //todas las rutas requieren le login
 router.use(authMiddleware)
