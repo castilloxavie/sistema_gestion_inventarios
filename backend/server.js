@@ -10,10 +10,14 @@ async function star() {
         await sequelize.authenticate()
         console.log("Conexion a la base de datos exitosa")
 
-        await sequelize.sync({alter: true})
-        console.log("Tablas sincronizadas correctamente");
+        if(process.env.NODE_ENV === 'development'){
+            await sequelize.sync({alter: true})
+            console.log("Tablas sincronizadas correctamente");
+        } else {
+            console.log("Modo producción - sincronización de tablas desactivada");
+        }
 
-        const PORT = process.env.PORT
+        const PORT = process.env.PORT || 3000
 
         app.listen(PORT, () => {
             console.log(`App escuchando peticiones en el puerto http://localhost:${PORT}!`);
