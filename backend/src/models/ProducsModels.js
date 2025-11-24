@@ -2,13 +2,17 @@ import {DataTypes} from "sequelize"
 import { sequelize } from "../config/databases.js"
 
 export const Products = sequelize.define(
-    "sequelize",
+    "Product",
     {
         nombre:{type: DataTypes.STRING, allowNull: false},
         codigo: {type: DataTypes.STRING, allowNull: false, unique: true},
         categoria: {type: DataTypes.STRING},
         precio: {type: DataTypes.DECIMAL(10,2), allowNull: false},
-        stock: {type: DataTypes.INTEGER, defaultValue: 0}
+        stock: {type: DataTypes.INTEGER, defaultValue: 0},
+        estado: {type: DataTypes.INTEGER, defaultValue: 1}  // 1=activo, 0=inactivo
     },
-    {timestamps: true}
+    {
+        timestamps: true,
+        tableName: "products"
+    }
 )
