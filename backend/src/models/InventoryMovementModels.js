@@ -8,5 +8,8 @@ export const InventoryMovement = sequelize.define(
         cantidad: {type: DataTypes.INTEGER, allowNull: false},
         descripcion: { type: DataTypes.STRING}
     },
-    {timestamps: true}
+    {
+        timestamps: true,
+        tableName: "inventorymovements"
+    }
 )

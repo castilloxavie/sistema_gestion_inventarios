@@ -1,3 +1,4 @@
+import { where } from "sequelize";
 import { Provider } from "../../models/ProviderModels.js";
 
 
@@ -37,13 +38,27 @@ class ProviderServices {
     }
 
     async updateProviders(id, data) {
-        const providers = await Provider.findOne(id)
-        if(!providers) throw new Error("El proveedor no existe")
-        
-        await Provider.update(data, {where: {id:id}})
-        const updateProviders = await Provider.findByPk(id)
-        console.log("Se actualizo el Provedor correctamente: ", updateProviders);
-        return updateProviders
+        const providers = await Provider.findOne({ where: { id: id, estado: 1 } })
+        if(!providers) throw new Error("El proveedor no existe o está inactivo")
+
+        // Filtrar solo campos permitidos para actualización parcial
+        const allowedFields = ['nombre', 'telefono', 'email', 'direccion']
+        const updateData = {}
+        for (const field of allowedFields) {
+            if (data[field] !== undefined) {
+                updateData[field] = data[field]
+            }
+        }
+
+        // Verificar que al menos un campo se va a actualizar
+        if (Object.keys(updateData).length === 0) {
+            throw new Error("No se proporcionaron campos válidos para actualizar")
+        }
+
+        await Provider.update(updateData, { where: { id: id } })
+        const providerUpdate = await Provider.findByPk(id)
+        console.log(`Proveedor actualizado correctamente: ${providerUpdate}`);
+        return providerUpdate
     }
 
     async deleteProviders(id) {
