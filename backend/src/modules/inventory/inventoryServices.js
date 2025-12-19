@@ -36,7 +36,15 @@ class InventoryServices {
     async getMovement(){
         return await InventoryMovement.findAll({
             include: [
-                {model: Products, atributes: ["nombre", "precio", "stock"]}
+                {model: Products, attributes: ["nombre", "precio", "stock"]}
+            ]
+        })
+    }
+
+    async getMovementById(id){
+        return await InventoryMovement.findByPk(id, {
+            include: [
+                {model: Products, attributes: ["nombre", "precio", "stock"]}
             ]
         })
     }
