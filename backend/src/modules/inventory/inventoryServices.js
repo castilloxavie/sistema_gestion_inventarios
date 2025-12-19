@@ -1,6 +1,6 @@
 import {InventoryMovement} from "../../models/InventoryMovementModels.js"
 import {Products} from "../../models/ProducsModels.js"
-import {Op} from "sequelize"
+
 
 class InventoryServices {
     async createInventory(data){
