@@ -105,4 +105,16 @@ A continuación se listan los principales endpoints que ya están funcionando co
 - `GET /api/providers/:id`: Obtiene un proveedor por ID (roles **admin** y **vendedor**).
 - `POST /api/providers`: Crea un nuevo proveedor (solo rol **admin**).
 - `PUT /api/providers/:id`: Actualiza proveedor (roles **admin** y **vendedor**).
-- `DELETE /api/providers/:id`: Eliminar proveedor (role **admin**)
+- `DELETE /api/providers/:id`: Eliminar proveedor (role **admin**).
+
+### Gestión de Inventario
+
+- `GET /api/inventory`: Obtiene todos los movimientos de inventario (roles **admin** y **vendedor**).
+- `GET /api/inventory/:id`: Obtiene un movimiento de inventario por ID (roles **admin** y **vendedor**).
+- `POST /api/inventory`: Crea un nuevo movimiento de inventario (roles **admin** y **vendedor**).
+
+### Gestión de Ventas
+
+- `POST /api/sales`: Crea una nueva venta (roles **admin** y **vendedor**).
+- `GET /api/sales`: Obtiene todas las ventas (roles **admin** y **vendedor**).
+- `GET /api/sales/:id`: Obtiene una venta por ID (solo rol **admin**).
