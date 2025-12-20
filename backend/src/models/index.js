@@ -27,6 +27,10 @@ Sale.belongsTo(User, {foreignKey: "usuario_id"})
 Products.hasMany(SaleItem, {foreignKey: "producto_id"})
 SaleItem.belongsTo(Products, {foreignKey: "producto_id"})
 
+//Sale 1:N SaleItem
+Sale.hasMany(SaleItem, {foreignKey: "venta_id"})
+SaleItem.belongsTo(Sale, {foreignKey: "venta_id"})
+
 
 export default {
     User,

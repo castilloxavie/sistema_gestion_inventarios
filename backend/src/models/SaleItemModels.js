@@ -7,6 +7,8 @@ export const SaleItem = sequelize.define(
     {
         cantidad:{type: DataTypes.INTEGER, allowNull: false},
         precio_unitario: {type: DataTypes.DECIMAL(10, 2), allowNull: false},
+        venta_id: {type: DataTypes.INTEGER, allowNull: false},
+        producto_id: {type: DataTypes.INTEGER, allowNull: false}
     },
     {timestamps: true}
 )

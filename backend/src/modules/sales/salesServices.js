@@ -7,53 +7,58 @@ import { sequelize } from "../../config/databases.js"
 
 class SaleServices{
     async createSale(data) {
-        const {userId, items} = data
+        const {usuario_id, items} = data
 
-        if(!items || items.lenght === 0) throw new Error("La venta debe tener al menos un item (producto)")
+        if(!items || items.length === 0) throw new Error("La venta debe tener al menos un item (producto)")
         
         const secureTransaction = await sequelize.transaction()
 
         try {
             let total = 0
 
-            for(const item in items){
-                const product = await Products.findByPk(item.productId)
+            // Validar stock y calcular total
+            for(const item of items){
+                const product = await Products.findByPk(item.producto_id)
 
-                if(!product) throw new Error(`El producto con ID ${item.productId} no existe`)
+                if(!product) throw new Error(`El producto con ID ${item.producto_id} no existe`)
                 if(product.stock < item.cantidad) throw new Error(`Stock insuficiente para el producto ${product.nombre}`)
                 
-                total += product.precio * item.cantidad
+                total += parseFloat(product.precio) * parseInt(item.cantidad)
             }
 
+            // Crear la venta
             const sale = await Sale.create({
-                userId,
+                usuario_id,
                 total
             },
             {
                 transaction: secureTransaction
             })
 
-            for(const item in items){
-                const product = await Products.findByPk(item.productId)
+            // Crear items de venta y actualizar inventario
+            for(const item of items){
+                const product = await Products.findByPk(item.producto_id)
 
                 await SaleItem.create({
-                    saleId: sale.saleId,
-                    produtId: item.productId,
-                    quantity: item.cantidad,
-                    uniPrice: product.precio
+                    venta_id: sale.id,
+                    producto_id: item.producto_id,
+                    cantidad: item.cantidad,
+                    precio_unitario: product.precio
                 },
                 {
                     transaction: secureTransaction
                 })
 
+                // Actualizar stock del producto
                 product.stock -= item.cantidad
-                await product.save(secureTransaction)
+                await product.save({transaction: secureTransaction})
 
+                // Registrar movimiento de inventario
                 await InventoryMovement.create({
-                    productId: item.productId,
-                    type: "salida",
-                    quantity: item.cantidad
-                    
+                    producto_id: item.producto_id,
+                    tipo: "salida",
+                    cantidad: item.cantidad,
+                    descripcion: `Venta #${sale.id}`
                 },
                 {
                     transaction: secureTransaction
@@ -61,7 +66,7 @@ class SaleServices{
             
             }
 
-            await  secureTransaction.commit()
+            await secureTransaction.commit()
             console.log("Se creo la venta correctamente: ", sale);
             return sale
 
@@ -97,7 +102,6 @@ class SaleServices{
         console.log("Venta encontrada: ", sale);
         return sale
     }
-
 }
 
 export default new SaleServices()
