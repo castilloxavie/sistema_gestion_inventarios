@@ -1,12 +1,18 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Package, Users, ClipboardList, ShoppingCart, LogOut } from 'lucide-react';
 import { useAuth } from '../../auth/AuthContext';
 import './Layout.css';
 
 export default function Sidebar() {
     const location = useLocation();
+    const navigate = useNavigate();
     const { logout } = useAuth();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
 
     const isActive = (path) => location.pathname === path;
 
