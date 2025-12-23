@@ -1,5 +1,5 @@
 import { useAuth } from "../auth/AuthContext"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { useState } from "react"
 import "../styles/Login.css"
 
@@ -58,6 +58,12 @@ export default function Login() {
                 <button className={`submit-button ${loading ? 'disabled' : ''}`} type="submit" disabled={loading}>
                     {loading ? "Ingresando..." : "Ingresar"}
                 </button>
+
+                <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                    <Link to="/register" style={{ color: '#007bff', textDecoration: 'none' }}>
+                        ¿No tienes cuenta? Regístrate
+                    </Link>
+                </div>
             </form>
         </div>
     )

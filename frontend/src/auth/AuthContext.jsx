@@ -18,13 +18,19 @@ export const AuthProvider = ({children}) => {
         setUser(user)
     }
 
+    const register = async (userData) => {
+        // userData: { nombre, apellido, email, password, rol }
+        const response = await api.post("/auth/register", userData)
+        return response.data
+    }
+
     const logout = () => {
         localStorage.removeItem("token")
         localStorage.removeItem("user")
     }
 
     return(
-        <AuthContext.Provider value={{user, login, logout}}>
+        <AuthContext.Provider value={{user, login, logout, register}}>
             {children}
         </AuthContext.Provider>
     )
