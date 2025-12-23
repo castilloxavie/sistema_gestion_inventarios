@@ -1,4 +1,4 @@
-import {Routes, Route, BrowserRouter} from "react-router-dom"
+import {Routes, Route, BrowserRouter, Navigate} from "react-router-dom"
 import Login from "../pages/Login"
 import Dashboard from "../pages/Dashboard"
 import Products from "../pages/Products"
@@ -11,6 +11,7 @@ export default function AppRoutes() {
     return (
         <BrowserRouter>
             <Routes>
+                <Route path="/" element={<Navigate to="/login" replace />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<ProtectedRouter> <Dashboard /> </ProtectedRouter>} />
                 <Route path="/products" element = {<ProtectedRouter role={["admin", "vendedor"]}> <Products /> </ProtectedRouter>} />

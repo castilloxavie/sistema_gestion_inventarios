@@ -2,7 +2,7 @@
 
 ## Descripción
 
-Este es el backend para un sistema de gestión de inventarios diseñado para ser utilizado tanto por pequeñas como por grandes empresas. El sistema gestiona usuarios, productos, proveedores, ventas y movimientos de inventario, y cuenta con un sistema de autenticación basado en roles para controlar el acceso a las diferentes funcionalidades.
+Este es un sistema completo de gestión de inventarios (full-stack) diseñado para ser utilizado tanto por pequeñas como por grandes empresas. El sistema gestiona usuarios, productos, proveedores, ventas y movimientos de inventario, y cuenta con un sistema de autenticación basado en roles para controlar el acceso a las diferentes funcionalidades. Incluye un backend API RESTful desarrollado con Node.js y Express, y un frontend desarrollado con React y Vite.
 
 ## Características Principales
 
@@ -17,6 +17,7 @@ Este es el backend para un sistema de gestión de inventarios diseñado para ser
 -   **Gestión de Ventas:** Modelado de ventas con campo de total para registrar el monto de las ventas.
 -   **API RESTful:** Endpoints seguros para interactuar con la aplicación frontend.
 -   **Autenticación y Seguridad:** Autenticación mediante JWT, almacenamiento seguro de contraseñas con bcrypt.
+-   **Frontend Interactivo:** Interfaz de usuario desarrollada con React, con navegación protegida por roles, incluyendo páginas para login, dashboard, gestión de productos, proveedores, inventario y ventas.
 
 ## Tecnologías Utilizadas
 
@@ -30,6 +31,9 @@ A continuación se listan las principales tecnologías y librerías utilizadas e
 | ![Sequelize](https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&logo=sequelize&logoColor=white) | ORM de Node.js para bases de datos SQL. |
 | ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white) | Estándar para la creación de tokens de acceso. |
 | ![Bcrypt.js](https://img.shields.io/badge/Bcrypt-62438B?style=for-the-badge) | Librería para el hasheo de contraseñas. |
+| ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black) | Librería para la construcción de interfaces de usuario. |
+| ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white) | Herramienta de construcción rápida para desarrollo web. |
+| ![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white) | Cliente HTTP para realizar peticiones a la API. |
 
 ## Instalación
 
@@ -58,21 +62,50 @@ A continuación se listan las principales tecnologías y librerías utilizadas e
 
 ## Uso
 
+### Backend
+
 Para iniciar el servidor en modo de desarrollo (con reinicio automático y sincronización de tablas):
 
 ```bash
+cd backend
 npm run dev
 ```
 
 Para iniciar el servidor en modo de producción:
 
 ```bash
+cd backend
 npm start
 ```
 
 El servidor se ejecutará en el puerto configurado (por ejemplo, `http://localhost:3000`).
 
 Durante el arranque, si la variable de entorno `NODE_ENV` está en `development`, el servidor sincroniza automáticamente las tablas con la base de datos (alterando la estructura si es necesario). En producción, esta sincronización está desactivada para evitar modificaciones no deseadas.
+
+### Frontend
+
+Para iniciar el servidor de desarrollo del frontend:
+
+```bash
+cd frontend
+npm run dev
+```
+
+El frontend se ejecutará en `http://localhost:5173` (puerto por defecto de Vite).
+
+Para construir el frontend para producción:
+
+```bash
+cd frontend
+npm run build
+```
+
+Para previsualizar la construcción de producción:
+
+```bash
+cd frontend
+npm run preview
+```
 
 ## Endpoints Disponibles
 
