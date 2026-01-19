@@ -1,0 +1,3 @@
+- [x] Editar ProductForm.jsx para convertir nombre y código a mayúsculas en handleChange y useEffect
+- [x] Editar ProductList.jsx para mostrar nombre y código en mayúsculas en la tabla
+- [x] Agregar botón de Dashboard en ProductList.jsx similar al de Nuevo Producto
