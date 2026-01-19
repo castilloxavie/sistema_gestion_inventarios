@@ -1,10 +1,13 @@
 import { AuthProvider } from "./auth/AuthContext"
+import { DashboardProvider } from "./auth/DashboardContext"
 import AppRoutes from "./routers/appRoutes"
 
 function App() {
   return (
     <AuthProvider>
-      <AppRoutes />
+      <DashboardProvider>
+        <AppRoutes />
+      </DashboardProvider>
     </AuthProvider>
   )
 }

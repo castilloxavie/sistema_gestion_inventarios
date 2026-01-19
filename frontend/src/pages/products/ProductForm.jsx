@@ -2,22 +2,26 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { createProduct, getProductById, updateProduct } from "../../services/productServices";
+import { useDashboard } from "../../auth/DashboardContext";
 
-import "../../styles/produc.css"
+import "../../styles/produc.css";
+import { Home } from 'lucide-react';
 
-export default function ProductForm () {
-    const {id} = useParams()
-    const navigate = useNavigate()
+
+export default function ProductForm() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { fetchDashboardData } = useDashboard();
 
     const [form, setForm] = useState({
         nombre: "",
         codigo: "",
-        precio:"",
+        precio: "",
         stock: ""
-    })
+    });
 
-    useEffect(() =>{
-        if(id) {
+    useEffect(() => {
+        if (id) {
             getProductById(id).then((data) => {
                 setForm({
                     ...data,
@@ -26,7 +30,7 @@ export default function ProductForm () {
                 });
             });
         }
-    }, [id])
+    }, [id]);
 
     const handleChange = (e) => {
         const value = e.target.name === 'nombre' || e.target.name === 'codigo' ? e.target.value.toUpperCase() : e.target.value;
@@ -39,13 +43,21 @@ export default function ProductForm () {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (id) {
-            await updateProduct(id, form);
-        } else {
-            await createProduct(form);
+        try {
+            if (id) {
+                await updateProduct(id, form);
+            } else {
+                await createProduct(form);
+            }
+            
+            // Recargar los datos del dashboard
+            await fetchDashboardData();
+            
+            navigate("/products");
+        } catch (error) {
+            console.error("Error al guardar el producto:", error)
+            // Opcional: mostrar un mensaje de error al usuario
         }
-
-        navigate("/products");
     };
 
 
@@ -53,9 +65,8 @@ export default function ProductForm () {
         <div className="product-form">
             <div className="form-header">
                 <h2>{id ? "Editar producto" : "Nuevo producto"}</h2>
-                <button className="btn btn-dashboard" onClick={() => navigate("/dashboard")}>
-                    <Home size={20} />
-                    Dashboard
+                <button className="btn btn-dashboard" onClick={() => navigate("/products")}>
+                    Volver a Productos
                 </button>
             </div>
 
@@ -118,5 +129,3 @@ export default function ProductForm () {
         </div>
     );
 }
-
-

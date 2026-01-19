@@ -1,4 +1,5 @@
 import { Products } from "../../models/ProducsModels.js"
+import { InventoryMovement } from "../../models/InventoryMovementModels.js"
 
 class ProductServices {
     async getAllProduct() {
@@ -30,11 +31,22 @@ class ProductServices {
         const product = await Products.create({
             nombre,
             codigo,
-            categoria, 
+            categoria,
             precio,
             stock,
             estado: 1
         })
+
+        // Crear movimiento de inventario si hay stock inicial
+        if (stock > 0) {
+            await InventoryMovement.create({
+                producto_id: product.id,
+                tipo: "entrada",
+                cantidad: stock,
+                descripcion: "Stock inicial al crear producto"
+            })
+        }
+
         console.log("Producto creado correctamente:", product);
         return product
     }
@@ -42,12 +54,36 @@ class ProductServices {
     async updateProduct(id, data){
         const product = await Products.findByPk(id)
         if(!product) throw new Error("El producto no existe")
-        
+
+        const oldStock = product.stock
+        const newStock = data.stock
+
         await Products.update(data, {where: {id: id}})
         const updatedProduct = await Products.findByPk(id)
+
+        // Crear movimiento de inventario si el stock cambió
+        if (newStock !== oldStock) {
+            const difference = newStock - oldStock
+            if (difference > 0) {
+                await InventoryMovement.create({
+                    producto_id: id,
+                    tipo: "entrada",
+                    cantidad: difference,
+                    descripcion: "Aumento de stock al actualizar producto"
+                })
+            } else if (difference < 0) {
+                await InventoryMovement.create({
+                    producto_id: id,
+                    tipo: "salida",
+                    cantidad: Math.abs(difference),
+                    descripcion: "Disminución de stock al actualizar producto"
+                })
+            }
+        }
+
         console.log("Producto actualizado correctamente", updatedProduct);
         return updatedProduct
-        
+
 
     }
 

@@ -1,42 +1,50 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Home } from "lucide-react"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Home } from "lucide-react";
 
-import { deleteProduct, getProducts } from "../../services/productServices.js"
+import { deleteProduct, getProducts } from "../../services/productServices.js";
+import { useDashboard } from "../../auth/DashboardContext";
 
-import "../../styles/produc.css"
+import "../../styles/produc.css";
 
-export default function ProductList () {
-    const [products, setProducts] = useState([])
-    const [loading, setLoading] = useState(true)
-    const navigate = useNavigate()
+export default function ProductList() {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+    const { fetchDashboardData } = useDashboard();
 
     const loadProducts = async () => {
         try {
             const data = await getProducts();
-            setProducts(data)
-        } finally  {
-            setLoading(false)
+            setProducts(data);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
-        loadProducts()
-    }, [])
+        loadProducts();
+    }, []);
 
     const handleDelete = async (id) => {
-        if(!confirm("¿Estás seguro de eliminar este producto?")) {
-            return
+        if (!confirm("¿Estás seguro de eliminar este producto?")) {
+            return;
         }
-        await deleteProduct(id)
-        loadProducts()
-    }
+        try {
+            await deleteProduct(id);
+            await loadProducts(); // Recargar la lista de productos
+            await fetchDashboardData(); // Recargar los datos del dashboard
+        } catch (error) {
+            console.error("Error al eliminar el producto:", error);
+            // Opcional: mostrar un mensaje de error
+        }
+    };
 
-    if(loading) return (
+    if (loading) return (
         <div className="loading-container">
             <p>Cargando Productos...</p>
         </div>
-    )
+    );
 
     return (
         <div className="products-container">
@@ -95,6 +103,3 @@ export default function ProductList () {
         </div>
     );
 }
-
-
-

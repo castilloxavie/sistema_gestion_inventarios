@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import api from '../api/axios';
+import React, { useEffect } from 'react';
+import { useDashboard } from '../auth/DashboardContext';
 import Layout from '../components/layout/Layout';
 import { 
     Package, Users, ShoppingBag, DollarSign, TrendingUp, Activity 
@@ -11,31 +11,14 @@ import {
 import '../styles/Dashboard.css';
 
 export default function Dashboard() {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const { dashboardData, loading, fetchDashboardData } = useDashboard();
 
     useEffect(() => {
-        const fetchDashboardData = async () => {
-            try {
-                const response = await api.get('/dashboard');
-                // El backend devuelve response.data directamente según el uso típico de Axios.
-                // Sin embargo, al revisar archivos anteriores, parece que response.data es la carga útil.
-                // Si se vuelve a encapsular en la propiedad "data", ajuste.
-                // Según authContext "response.data.data", podría estar encapsulado.
-                // Supongamos primero la respuesta estándar y, si es necesario, console.log.
-                // De hecho, comprobaré cómo está configurado Axios o la estructura de la respuesta.
-                // AuthContext usó response.data.data porque el controlador de inicio de sesión devuelve { message, data: token }.
-                // Es probable que el controlador del panel de control devuelva json(result).
-                setData(response.data);
-            } catch (error) {
-                console.error("Error fetching dashboard data:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchDashboardData();
-    }, []);
+        // Solo busca datos si aún no se han cargado
+        if (!dashboardData) {
+            fetchDashboardData();
+        }
+    }, [dashboardData, fetchDashboardData]);
 
     if (loading) {
         return (
@@ -45,9 +28,9 @@ export default function Dashboard() {
         );
     }
 
-    if (!data) return null;
+    if (!dashboardData) return null;
 
-    const { totals, charts } = data;
+    const { totals, charts } = dashboardData;
 
     // Prepare chart data
     const topProductsData = charts.topProducts.map(item => ({
@@ -208,3 +191,4 @@ function StatCard({ icon, label, value, color }) {
         </div>
     );
 }
+
