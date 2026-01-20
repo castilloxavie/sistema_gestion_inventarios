@@ -356,10 +356,125 @@
     color: #64748b;
 }
 
+/* Sales Detail Styles */
+.sales-detail-card {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.sales-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 24px;
+    text-align: center;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 16px;
+}
+
+.sales-info {
+    margin-bottom: 32px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 1.1rem;
+}
+
+.info-value {
+    color: #1e293b;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.items-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.items-table th {
+    background: #f8fafc;
+    padding: 16px;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.items-table td {
+    padding: 16px;
+    font-size: 1rem;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.items-table tr:last-child td {
+    border-bottom: none;
+}
+
+.items-table tr:hover {
+    background-color: #f8fafc;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .sales-container {
         padding: 20px;
+    }
+
+    .sales-detail-card {
+        padding: 24px;
+    }
+
+    .sales-title {
+        font-size: 1.5rem;
+    }
+
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .items-title {
+        font-size: 1.25rem;
+    }
+
+    .items-table th,
+    .items-table td {
+        padding: 12px 8px;
+        font-size: 0.9rem;
     }
 
     .sales-header {

@@ -15,7 +15,7 @@ export default function SaleItemRow({
                 <option value="">Producto</option>
                 {products.map((p) => (
                     <option key={p.id} value={p.id}>
-                        {p.name}
+                        {p.nombre}
                     </option>
                 ))}
             </select>

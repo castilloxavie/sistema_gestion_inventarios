@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { getSaleById } from "../../services/salesServices";
 
@@ -7,6 +7,7 @@ import "../../styles/sales.css";
 
 export default function SalesDetail() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [sale, setSale] = useState(null);
     const [error, setError] = useState("");
 
@@ -27,17 +28,43 @@ export default function SalesDetail() {
 
     return (
         <div className="sales-container">
-            <h2>Detalle de Venta #{sale.id}</h2>
-            <p><strong>Total:</strong> ${sale.total}</p>
-            <p><strong>Fecha:</strong> {new Date(sale.createdAt).toLocaleString()}</p>
-            <h3>Items:</h3>
-            <ul>
-                {sale.SaleItems.map(item => (
-                    <li key={item.id}>
-                        {item.Product.nombre} - Cantidad: {item.cantidad} - Precio Unitario: ${item.precio_unitario}
-                    </li>
-                ))}
-            </ul>
+            <div className="sales-detail-card">
+                <button className="btn btn-secondary" onClick={() => navigate('/sales')}>
+                    ← Volver a Ventas
+                </button>
+                <h2 className="sales-title">Detalle de Venta #{sale.id}</h2>
+                <div className="sales-info">
+                    <div className="info-row">
+                        <span className="info-label">Total:</span>
+                        <span className="info-value">${sale.total}</span>
+                    </div>
+                    <div className="info-row">
+                        <span className="info-label">Fecha:</span>
+                        <span className="info-value">{new Date(sale.createdAt).toLocaleString()}</span>
+                    </div>
+                </div>
+                <h3 className="items-title">Items de la Venta</h3>
+                <table className="items-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {sale.SaleItems.map(item => (
+                            <tr key={item.id}>
+                                <td>{item.Product.nombre}</td>
+                                <td>{item.cantidad}</td>
+                                <td>${item.precio_unitario}</td>
+                                <td>${(item.cantidad * item.precio_unitario).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

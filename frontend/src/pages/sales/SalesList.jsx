@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Home } from "lucide-react";
 
 import { getSale } from "../../services/salesServices";
 
@@ -26,6 +27,10 @@ export default function SalesList() {
             <div className="sales-header">
                 <h2>Ventas</h2>
                 <div className="header-actions">
+                    <button className="btn btn-secondary" onClick={() => navigate("/dashboard")}>
+                        <Home size={20} />
+                        Dashboard
+                    </button>
                     <button className="btn btn-primary" onClick={() => navigate("/sales/new")}>
                         Nueva venta
                     </button>

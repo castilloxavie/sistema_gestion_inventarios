@@ -82,6 +82,11 @@ export default function SalesForm() {
     return (
         <div className="sales-form">
             <div className="pos-header">
+                <div className="header-actions">
+                    <button className="btn btn-secondary" onClick={() => navigate('/sales')}>
+                        ← Volver a Ventas
+                    </button>
+                </div>
                 <h2>Nueva Venta</h2>
                 <div className="pos-info">
                     <span>Fecha: {new Date().toLocaleDateString()}</span>
