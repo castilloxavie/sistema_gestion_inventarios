@@ -35,6 +35,10 @@ export default function SalesDetail() {
                 <h2 className="sales-title">Detalle de Venta #{sale.id}</h2>
                 <div className="sales-info">
                     <div className="info-row">
+                        <span className="info-label">Vendedor:</span>
+                        <span className="info-value">{sale.User?.nombre || 'N/A'}</span>
+                    </div>
+                    <div className="info-row">
                         <span className="info-label">Total:</span>
                         <span className="info-value">${sale.total}</span>
                     </div>

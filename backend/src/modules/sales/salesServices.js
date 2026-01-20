@@ -1,8 +1,9 @@
-import {Sale} from "../../models/SaleModels.js"
-import {SaleItem} from "../../models/SaleItemModels.js"
-import { Products } from "../../models/ProducsModels.js"
-import {InventoryMovement} from "../../models/InventoryMovementModels.js"
-import { sequelize } from "../../config/databases.js"
+import { Sale } from "../../models/SaleModels.js";
+import { SaleItem } from "../../models/SaleItemModels.js";
+import { Products } from "../../models/ProducsModels.js";
+import { InventoryMovement } from "../../models/InventoryMovementModels.js";
+import { sequelize } from "../../config/databases.js";
+import { User } from "../../models/UserModels.js";
 
 
 class SaleServices{
@@ -82,6 +83,10 @@ class SaleServices{
                 {
                     model: SaleItem,
                     include: [{model: Products}]
+                },
+                {
+                    model: User,
+                    attributes: ["nombre", "apellido", "email"]
                 }
                 
             ]
@@ -94,6 +99,10 @@ class SaleServices{
                 {
                     model: SaleItem,
                     include: [{model: Products}]
+                },
+                {
+                    model: User,
+                    attributes: ["nombre", "apellido", "email"]
                 }
             ]
         })

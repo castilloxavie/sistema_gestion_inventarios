@@ -29,14 +29,10 @@ export default function SaleItemRow({
                 }
             />
 
-            <input
-                type="number"
-                step="0.01"
-                value={item.price}
-                onChange={(e) =>
-                    onChange(item.id, "price", e.target.value)
-                }
-            />
+            <div className="unit-price">
+                <span>Precio U.</span>
+                <span>${parseFloat(item.price).toFixed(2)}</span>
+            </div>
 
             <button onClick={() => onRemove(item.id)}>✕</button>
         </div>

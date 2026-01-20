@@ -24,9 +24,20 @@ export default function SalesForm() {
     }, []);
 
     const updateItem = (id, field, value) => {
-        setItems(items.map(i =>
-            i.id === id ? { ...i, [field]: value } : i
-        ));
+        setItems(items.map(i => {
+            if (i.id !== id) return i;
+
+            if (field === "product_id") {
+                const productId = parseInt(value, 10);
+                const product = products.find(p => p.id === productId);
+                return {
+                    ...i,
+                    product_id: productId,
+                    price: product ? product.precio : 0
+                };
+            }
+            return { ...i, [field]: value };
+        }));
     };
 
     const removeItem = (id) => {
