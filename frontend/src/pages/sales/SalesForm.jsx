@@ -51,10 +51,12 @@ export default function SalesForm() {
         ]);
     };
 
-    const total = items.reduce(
+    const subtotal = items.reduce(
         (sum, i) => sum + i.quantity * i.price,
         0
     );
+    const iva = subtotal * 0.19;
+    const total = subtotal + iva;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -138,7 +140,11 @@ export default function SalesForm() {
                         <div className="checkout-total">
                             <div className="total-row">
                                 <span>Subtotal:</span>
-                                <span>${total.toFixed(2)}</span>
+                                <span>${subtotal.toFixed(2)}</span>
+                            </div>
+                            <div className="total-row">
+                                <span>IVA (19%):</span>
+                                <span>${iva.toFixed(2)}</span>
                             </div>
                             <div className="total-row final-total">
                                 <span>Total:</span>
