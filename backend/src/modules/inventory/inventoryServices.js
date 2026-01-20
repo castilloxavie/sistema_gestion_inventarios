@@ -8,17 +8,21 @@ class InventoryServices {
 
         const product = await Products.findByPk(product_id)
         if(!product) throw new Error("El producto no existe")
-        if(quantity <= 0) throw new Error("La cantidad debe ser mayor a cero")
+        
+        const numericQuantity = parseInt(quantity, 10);
+        if (isNaN(numericQuantity) || numericQuantity <= 0) {
+            throw new Error("La cantidad debe ser un número válido mayor a cero");
+        }
 
         if(type === "IN") {
-            product.stock += quantity
+            product.stock += numericQuantity
         }
         else if (type === "OUT") {
-            if(product.stock < quantity){
+            if(product.stock < numericQuantity){
                 throw new Error("Stock insuficiente para realizar la salida")
             }
 
-            product.stock -= quantity
+            product.stock -= numericQuantity
         }
         else {
             throw new Error("El movimiento solicitado no es valido:(IN o OUT)")
@@ -30,7 +34,7 @@ class InventoryServices {
             producto_id: product_id,
             provider_id: provider_id || null,
             tipo: type === "IN" ? "entrada" : "salida",
-            cantidad: quantity
+            cantidad: numericQuantity
         })
     }
 
