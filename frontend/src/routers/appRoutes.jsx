@@ -10,6 +10,7 @@ import ProductList from "../pages/products/ProductList"
 import ProvidersForm from "../pages/providers/ProvidersForm"
 import ProvidersList from "../pages/providers/ProvidersList"
 import Register from "../pages/Register"
+import SalesDetail from "../pages/sales/SalesDetail"
 import SalesForm from "../pages/sales/SalesForm"
 import SalesList from "../pages/sales/SalesList"
 
@@ -31,6 +32,7 @@ export default function AppRoutes() {
                 <Route path="/inventory" element = {<ProtectedRouter role={["admin", "vendedor"]}> <InventoryList /> </ProtectedRouter>} />
                 <Route path="/sales" element = {<ProtectedRouter role={["admin", "vendedor"]}> <SalesList /> </ProtectedRouter>} />
                 <Route path="/sales/new" element = {<ProtectedRouter role={["admin", "vendedor"]}> <SalesForm /> </ProtectedRouter>} />
+                <Route path="/sales/:id" element = {<ProtectedRouter role={["admin", "vendedor"]}> <SalesDetail /> </ProtectedRouter>} />
             </Routes>
         </BrowserRouter>
     )

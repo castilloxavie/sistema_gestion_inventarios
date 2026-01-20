@@ -6,13 +6,13 @@ class SaleController {
         try {
              const sale = await SalesServices.createSale(req.body)
              console.log("Venta creada: ", sale);
-             return res.json(sale)
+             return res.status(201).json(sale)
 
         } catch (error) {
             console.log("Error al crear la Venta", error.message);
             res.status(500).json({error: error.message})
         }
-       
+
     }
 
     async getSale(req, res) {
