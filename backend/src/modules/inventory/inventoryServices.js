@@ -1,42 +1,44 @@
-import {InventoryMovement} from "../../models/InventoryMovementModels.js"
-import {Products} from "../../models/ProducsModels.js"
-
+import { InventoryMovement } from "../../models/InventoryMovementModels.js"
+import { Products } from "../../models/ProducsModels.js"
+import { Provider } from "../../models/ProviderModels.js"
 
 class InventoryServices {
     async createInventory(data){
-        const {producto_id, tipo, cantidad } = data
+        const {product_id, provider_id, type, quantity } = data
 
-        const product = await Products.findByPk(producto_id)
+        const product = await Products.findByPk(product_id)
         if(!product) throw new Error("El producto no existe")
-        if(cantidad <= 0) throw new Error("La cantidad debe ser mayor a cero")
-        
-        if(tipo === "entrada") {
-            product.stock += cantidad
+        if(quantity <= 0) throw new Error("La cantidad debe ser mayor a cero")
+
+        if(type === "IN") {
+            product.stock += quantity
         }
-        else if (tipo === "salida") {
-            if(product.stock < cantidad){
+        else if (type === "OUT") {
+            if(product.stock < quantity){
                 throw new Error("Stock insuficiente para realizar la salida")
             }
 
-            product.stock -= cantidad
+            product.stock -= quantity
         }
         else {
-            throw new Error("El movimiento solicitado no es valido:(entrada o salida)")
+            throw new Error("El movimiento solicitado no es valido:(IN o OUT)")
         }
 
         await product.save()
 
         return await InventoryMovement.create({
-            producto_id,
-            tipo,
-            cantidad
+            producto_id: product_id,
+            provider_id: provider_id || null,
+            tipo: type === "IN" ? "entrada" : "salida",
+            cantidad: quantity
         })
     }
 
     async getMovement(){
         return await InventoryMovement.findAll({
             include: [
-                {model: Products, attributes: ["nombre", "precio", "stock"]}
+                {model: Products, attributes: ["nombre", "precio", "stock"]},
+                {model: Provider, attributes: ["nombre"]}
             ]
         })
     }
@@ -44,7 +46,8 @@ class InventoryServices {
     async getMovementById(id){
         return await InventoryMovement.findByPk(id, {
             include: [
-                {model: Products, attributes: ["nombre", "precio", "stock"]}
+                {model: Products, attributes: ["nombre", "precio", "stock"]},
+                {model: Provider, attributes: ["nombre"]}
             ]
         })
     }

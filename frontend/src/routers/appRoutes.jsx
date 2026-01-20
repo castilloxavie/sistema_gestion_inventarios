@@ -2,12 +2,13 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 
 import ProtectedRouter from "../auth/ProtectedRoute"
 import Dashboard from "../pages/Dashboard"
-import Inventory from "../pages/Inventory"
 import Login from "../pages/Login"
 import ProductList from "../pages/products/ProductList"
 import ProductForm from "../pages/products/ProductForm"
 import ProvidersList from "../pages/providers/ProvidersList"
 import ProvidersForm from "../pages/providers/ProvidersForm"
+import InventoryForm from "../pages/inventory/InventoryForm"
+import InventoryList from "../pages/inventory/InventoryList"
 import Register from "../pages/Register"
 import Sales from "../pages/Sales"
 
@@ -25,7 +26,8 @@ export default function AppRoutes() {
                 <Route path="/providers" element = {<ProtectedRouter role={["admin", "vendedor"]}> <ProvidersList /> </ProtectedRouter>} />
                 <Route path="/providers/new" element = {<ProtectedRouter role={["admin", "vendedor"]}> <ProvidersForm /> </ProtectedRouter>} />
                 <Route path="/providers/:id" element = {<ProtectedRouter role={["admin", "vendedor"]}> <ProvidersForm /> </ProtectedRouter>} />
-                <Route path="/inventory" element = {<ProtectedRouter role={["admin", "vendedor"]}> <Inventory /> </ProtectedRouter>} />
+                <Route path="/inventory/new" element = {<ProtectedRouter role={["admin", "vendedor"]}> <InventoryForm /> </ProtectedRouter>} />
+                <Route path="/inventory" element = {<ProtectedRouter role={["admin", "vendedor"]}> <InventoryList /> </ProtectedRouter>} />
                 <Route path="/sales" element = {<ProtectedRouter role={["admin", "vendedor"]}> <Sales /> </ProtectedRouter>} />
             </Routes>
         </BrowserRouter>
