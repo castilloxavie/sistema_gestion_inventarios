@@ -1,17 +1,17 @@
+import { Activity, AlertTriangle, DollarSign, Package, PlusCircle, ShoppingBag, TrendingUp, Users } from 'lucide-react';
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+
+import { useAuth } from '../auth/AuthContext';
 import { useDashboard } from '../auth/DashboardContext';
 import Layout from '../components/layout/Layout';
-import { 
-    Package, Users, ShoppingBag, DollarSign, TrendingUp, Activity 
-} from 'lucide-react';
-import { 
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    AreaChart, Area 
-} from 'recharts';
+
 import '../styles/Dashboard.css';
 
 export default function Dashboard() {
     const { dashboardData, loading, fetchDashboardData } = useDashboard();
+    const { user } = useAuth();
 
     useEffect(() => {
         // Solo busca datos si aún no se han cargado
@@ -30,7 +30,114 @@ export default function Dashboard() {
 
     if (!dashboardData) return null;
 
-    const { totals, charts } = dashboardData;
+    // Renderizado condicional según rol
+    if (user?.rol !== 'admin') {
+        return <SellerDashboard data={dashboardData} />;
+    }
+
+    return <AdminDashboard data={dashboardData} />;
+}
+
+function SellerDashboard({ data }) {
+    const { today, recentSales, lowStockProducts } = data;
+
+    return (
+        <Layout>
+            <div className="dashboard-container">
+                <div className="dashboard-header">
+                    <h1>Hola, Vendedor</h1>
+                    <Link to="/sales" className="btn-primary">
+                        <PlusCircle size={20} />
+                        Nueva Venta
+                    </Link>
+                </div>
+
+                <div className="stats-grid">
+                    <StatCard 
+                        icon={<DollarSign size={24} />} 
+                        label="Ventas Hoy" 
+                        value={`$${parseFloat(today.amount || 0).toLocaleString()}`} 
+                        color="green"
+                    />
+                    <StatCard 
+                        icon={<ShoppingBag size={24} />} 
+                        label="Pedidos Hoy" 
+                        value={today.count} 
+                        color="blue"
+                    />
+                </div>
+
+                <div className="charts-grid">
+                    <div className="chart-card">
+                        <div className="chart-header">
+                            <h3 className="chart-title">Mis Ventas Recientes</h3>
+                        </div>
+                        <div className="table-container">
+                            <table className="activity-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Cliente</th>
+                                        <th>Total</th>
+                                        <th>Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {recentSales.map((sale) => (
+                                        <tr key={sale.id}>
+                                            <td>#{sale.id}</td>
+                                            <td>{sale.Client ? `${sale.Client.nombre} ${sale.Client.apellido || ''}` : 'Anónimo'}</td>
+                                            <td>${parseFloat(sale.total).toLocaleString()}</td>
+                                            <td>{new Date(sale.createdAt).toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})}</td>
+                                        </tr>
+                                    ))}
+                                    {recentSales.length === 0 && (
+                                        <tr>
+                                            <td colSpan="4" style={{textAlign: 'center', padding: '20px'}}>No has realizado ventas hoy</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div className="chart-card">
+                        <div className="chart-header" style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                            <AlertTriangle size={20} color="#ef4444" />
+                            <h3 className="chart-title" style={{color: '#ef4444'}}>Alerta Stock Bajo</h3>
+                        </div>
+                        <div className="table-container">
+                            <table className="activity-table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Stock</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {lowStockProducts.map((product) => (
+                                        <tr key={product.id}>
+                                            <td>{product.nombre}</td>
+                                            <td style={{fontWeight: 'bold', color: '#ef4444'}}>{product.stock}</td>
+                                        </tr>
+                                    ))}
+                                     {lowStockProducts.length === 0 && (
+                                        <tr>
+                                            <td colSpan="2" style={{textAlign: 'center', padding: '20px'}}>Todo el stock está bien</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    );
+}
+
+function AdminDashboard({ data }) {
+    const { totals, charts } = data;
 
     // Prepare chart data
     const topProductsData = charts.topProducts.map(item => ({
@@ -48,7 +155,7 @@ export default function Dashboard() {
     const salesTrendData = Object.entries(salesByDate).map(([date, total]) => ({
         date,
         total
-    })).sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort might need better date parsing if format changes
+    })).sort((a, b) => new Date(a.date) - new Date(b.date));
 
     return (
         <Layout>
@@ -113,7 +220,7 @@ export default function Dashboard() {
                             <h3 className="chart-title">Ventas Últimos 7 Días</h3>
                         </div>
                         <div style={{ height: 300 }}>
-                            <ResponsiveContainer width="100%" height="100%">
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                                 <AreaChart data={salesTrendData}>
                                     <defs>
                                         <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">

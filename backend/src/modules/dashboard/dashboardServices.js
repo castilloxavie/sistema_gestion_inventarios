@@ -4,6 +4,7 @@ import { User } from "../../models/UserModels.js";
 import { Sale } from "../../models/SaleModels.js";
 import { SaleItem } from "../../models/SaleItemModels.js";
 import { InventoryMovement } from "../../models/InventoryMovementModels.js";
+import { Client } from "../../models/ClientModels.js";
 import { sequelize } from "../../config/databases.js";
 import { Op } from "sequelize";
 
@@ -65,6 +66,51 @@ class DashBoardServices {
                 last7Days
             }
         }
+    }
+
+    async getSellerStats(userId) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+    
+        const totalSalesToday = await Sale.count({
+            where: {
+                usuario_id: userId,
+                createdAt: { [Op.gte]: today }
+            }
+        });
+    
+        const totalAmountToday = await Sale.sum('total', {
+            where: {
+                usuario_id: userId,
+                createdAt: { [Op.gte]: today }
+            }
+        }) || 0;
+    
+        // Últimas 5 ventas del usuario
+        const recentSales = await Sale.findAll({
+            where: { usuario_id: userId },
+            limit: 5,
+            order: [['createdAt', 'DESC']],
+            include: [{ model: Client, attributes: ['nombre', 'apellido'] }]
+        });
+    
+        // Productos con stock bajo (crítico < 10)
+        const lowStockProducts = await Products.findAll({
+            where: {
+                stock: { [Op.lt]: 10 },
+                estado: 1
+            },
+            limit: 5
+        });
+    
+        return {
+            today: {
+                count: totalSalesToday,
+                amount: totalAmountToday
+            },
+            recentSales,
+            lowStockProducts
+        };
     }
 }
 

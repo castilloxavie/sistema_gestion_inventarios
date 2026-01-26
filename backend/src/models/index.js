@@ -4,6 +4,7 @@ import { Provider } from "./ProviderModels.js"
 import { SaleItem } from "./SaleItemModels.js"
 import { Sale } from "./SaleModels.js"
 import { User } from "./UserModels.js"
+import { Client } from "./ClientModels.js"
 
 //!relaciones de las tablas 
 
@@ -24,6 +25,10 @@ InventoryMovement.belongsTo(User, {foreignKey: "usuario_id"})
 User.hasMany(Sale, {foreignKey: "usuario_id"})
 Sale.belongsTo(User, {foreignKey: "usuario_id"})
 
+//Client 1:N Sale
+Client.hasMany(Sale, {foreignKey: "cliente_id"})
+Sale.belongsTo(Client, {foreignKey: "cliente_id"})
+
 //Products 1:N SaleItem
 Products.hasMany(SaleItem, {foreignKey: "producto_id"})
 SaleItem.belongsTo(Products, {foreignKey: "producto_id"})
@@ -39,5 +44,6 @@ export default {
     Products,
     InventoryMovement,
     Sale,
-    SaleItem
+    SaleItem,
+    Client
 }; 

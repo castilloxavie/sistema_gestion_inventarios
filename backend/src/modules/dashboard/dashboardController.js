@@ -15,6 +15,20 @@ class DashboardController {
             })
         }
     }
+
+    async getSellerDashboard(req, res) {
+        try {
+            const userId = req.user.id; 
+            const data = await DashBoardServices.getSellerStats(userId);
+            return res.json(data);
+        } catch (error) {
+            console.log("error: ", error);
+            return res.status(500).json({
+                error: "Error al obtener estadísticas de vendedor",
+                detalle: error.message
+            });
+        }
+    }
 }
 
 export default new DashboardController()

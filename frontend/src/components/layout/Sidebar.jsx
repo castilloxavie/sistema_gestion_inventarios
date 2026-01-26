@@ -7,7 +7,7 @@ import './Layout.css';
 export default function Sidebar() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
 
     const handleLogout = () => {
         logout();
@@ -31,14 +31,21 @@ export default function Sidebar() {
                     <Package size={20} />
                     <span>Productos</span>
                 </Link>
-                <Link to="/providers" className={`nav-item ${isActive('/providers') ? 'active' : ''}`}>
-                    <Users size={20} />
-                    <span>Proveedores</span>
-                </Link>
-                <Link to="/inventory" className={`nav-item ${isActive('/inventory') ? 'active' : ''}`}>
-                    <ClipboardList size={20} />
-                    <span>Inventario</span>
-                </Link>
+                
+                {/* Solo Admin ve Proveedores e Inventario detallado */}
+                {user?.rol === 'admin' && (
+                    <>
+                        <Link to="/providers" className={`nav-item ${isActive('/providers') ? 'active' : ''}`}>
+                            <Users size={20} />
+                            <span>Proveedores</span>
+                        </Link>
+                        <Link to="/inventory" className={`nav-item ${isActive('/inventory') ? 'active' : ''}`}>
+                            <ClipboardList size={20} />
+                            <span>Inventario</span>
+                        </Link>
+                    </>
+                )}
+
                 <Link to="/sales" className={`nav-item ${isActive('/sales') ? 'active' : ''}`}>
                     <ShoppingCart size={20} />
                     <span>Ventas</span>

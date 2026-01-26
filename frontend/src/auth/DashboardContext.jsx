@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import api from '../api/axios';
+import { useAuth } from './AuthContext';
 
 const DashboardContext = createContext();
 
@@ -10,11 +11,14 @@ export const useDashboard = () => {
 export const DashboardProvider = ({ children }) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
 
     const fetchDashboardData = async () => {
         setLoading(true);
         try {
-            const response = await api.get('/dashboard');
+            // Determinar qué endpoint llamar según el rol
+            const endpoint = user?.rol === 'admin' ? '/dashboard' : '/dashboard/seller';
+            const response = await api.get(endpoint);
             setData(response.data);
         } catch (error) {
             console.error("Error fetching dashboard data:", error);

@@ -1,14 +1,14 @@
-import { Sale } from "../../models/SaleModels.js";
-import { SaleItem } from "../../models/SaleItemModels.js";
-import { Products } from "../../models/ProducsModels.js";
-import { InventoryMovement } from "../../models/InventoryMovementModels.js";
 import { sequelize } from "../../config/databases.js";
+import { Client } from "../../models/ClientModels.js";
+import { InventoryMovement } from "../../models/InventoryMovementModels.js";
+import { Products } from "../../models/ProducsModels.js";
+import { SaleItem } from "../../models/SaleItemModels.js";
+import { Sale } from "../../models/SaleModels.js";
 import { User } from "../../models/UserModels.js";
-
 
 class SaleServices{
     async createSale(data) {
-        const {usuario_id, items} = data
+        const {usuario_id, items, metodo_pago, cliente_id} = data
 
         if(!items || items.length === 0) throw new Error("La venta debe tener al menos un item (producto)")
         
@@ -27,10 +27,18 @@ class SaleServices{
                 total += parseFloat(product.precio) * parseInt(item.cantidad)
             }
 
+            // Calcular subtotal e iva (Asumiendo IVA 19% incluido en el precio)
+            const subtotal = total / 1.19;
+            const iva = total - subtotal;
+
             // Crear la venta
             const sale = await Sale.create({
                 usuario_id,
-                total
+                cliente_id: cliente_id || null,
+                metodo_pago: metodo_pago || "efectivo",
+                subtotal: subtotal.toFixed(2),
+                iva: iva.toFixed(2),
+                total: total.toFixed(2)
             },
             {
                 transaction: secureTransaction
@@ -87,6 +95,10 @@ class SaleServices{
                 {
                     model: User,
                     attributes: ["nombre", "apellido", "email"]
+                },
+                {
+                    model: Client,
+                    attributes: ["nombre", "apellido", "documento"]
                 }
                 
             ]
@@ -103,12 +115,14 @@ class SaleServices{
                 {
                     model: User,
                     attributes: ["nombre", "apellido", "email"]
+                },
+                {
+                    model: Client,
+                    attributes: ["nombre", "apellido", "documento"]
                 }
             ]
         })
-
-        if(!sale) throw new Error(`La venta con ID ${id} no existe`)
-        console.log("Venta encontrada: ", sale);
+        
         return sale
     }
 }

@@ -11,7 +11,7 @@ async function star() {
         console.log("Conexion a la base de datos exitosa")
 
         if(process.env.NODE_ENV === 'development'){
-            //await sequelize.sync({alter: true})
+            await sequelize.sync({alter: true})
             console.log("Tablas sincronizadas correctamente");
         } else {
             console.log("Modo producción - sincronización de tablas desactivada");
