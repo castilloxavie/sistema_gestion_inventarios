@@ -15,6 +15,7 @@ Un sistema de gestión de inventarios completo (full-stack) diseñado para admin
     - [Frontend](#frontend)
   - [Estructura del Proyecto](#estructura-del-proyecto)
   - [Pre-requisitos](#pre-requisitos)
+  - [Notas Adicionales](#notas-adicionales)
   - [Instalación](#instalación)
   - [Uso](#uso)
     - [Backend](#backend-1)
@@ -28,6 +29,7 @@ Un sistema de gestión de inventarios completo (full-stack) diseñado para admin
 -   **Módulos de Gestión:**
     -   CRUD de Productos.
     -   CRUD de Proveedores.
+    -   CRUD de Clientes.
     -   Registro de Movimientos de Inventario (entradas/salidas).
     -   Registro de Ventas y sus detalles.
 -   **Dashboard Interactivo:** Visualización de datos clave del negocio.
@@ -65,11 +67,13 @@ Un sistema de gestión de inventarios completo (full-stack) diseñado para admin
 ├── backend/          # Contiene el código de la API (Node.js/Express)
 │   ├── src/
 │   ├── package.json
-│   └── .env.example
+│   ├── seedInventory.js  # Script para sembrar datos iniciales de inventario
+│   └── .env.example      # Archivo de ejemplo para variables de entorno
 └── frontend/         # Contiene el código de la aplicación cliente (React)
     ├── src/
     ├── package.json
-    └── .env.example
+    ├── README.md          # Documentación específica del frontend
+    └── .env.example       # Archivo de ejemplo para variables de entorno
 ```
 
 ## Pre-requisitos
@@ -77,6 +81,12 @@ Un sistema de gestión de inventarios completo (full-stack) diseñado para admin
 -   [Node.js](https://nodejs.org/) (versión 18 o superior)
 -   [npm](https://www.npmjs.com/)
 -   Un servidor de [MySQL](https://www.mysql.com/)
+
+## Notas Adicionales
+
+-   El proyecto utiliza módulos ES6 (ES modules), por lo que las importaciones y exportaciones siguen la sintaxis moderna de JavaScript.
+-   Para sembrar datos iniciales de inventario, ejecuta el script `seedInventory.js` en el directorio backend.
+-   Asegúrate de configurar correctamente las variables de entorno en los archivos `.env` basados en los ejemplos proporcionados.
 
 ## Instalación
 
