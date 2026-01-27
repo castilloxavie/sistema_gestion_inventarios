@@ -5,6 +5,7 @@ import { Products } from "../../models/ProducsModels.js";
 import { SaleItem } from "../../models/SaleItemModels.js";
 import { Sale } from "../../models/SaleModels.js";
 import { User } from "../../models/UserModels.js";
+import PDFDocument from 'pdfkit';
 
 class SaleServices{
     async createSale(data) {
@@ -122,8 +123,93 @@ class SaleServices{
                 }
             ]
         })
-        
+
         return sale
+    }
+
+    async generateSalePDF(saleId) {
+        const sale = await this.getSaleById(saleId);
+        if (!sale) throw new Error('Venta no encontrada');
+
+        const doc = new PDFDocument({ margin: 50 });
+        const buffers = [];
+
+        doc.on('data', buffers.push.bind(buffers));
+        doc.on('end', () => {});
+
+        // Header
+        doc.fontSize(20).text('Factura de Venta', { align: 'center' });
+        doc.moveDown();
+        doc.fontSize(12).text(`Factura #${sale.id}`, { align: 'center' });
+        doc.text(`Fecha: ${new Date(sale.createdAt).toLocaleDateString('es-ES')}`, { align: 'center' });
+        doc.moveDown();
+
+        // Vendedor
+        doc.fontSize(14).text('Vendedor:', { underline: true });
+        doc.fontSize(12).text(`${sale.User.nombre} ${sale.User.apellido}`);
+        doc.text(`Email: ${sale.User.email}`);
+        doc.moveDown();
+
+        // Cliente
+        doc.fontSize(14).text('Cliente:', { underline: true });
+        if (sale.Client) {
+            doc.fontSize(12).text(`${sale.Client.nombre} ${sale.Client.apellido}`);
+            doc.text(`Documento: ${sale.Client.documento}`);
+        } else {
+            doc.fontSize(12).text('Venta Anónima');
+        }
+        doc.moveDown();
+
+        // Productos
+        doc.fontSize(14).text('Productos:', { underline: true });
+        doc.moveDown(0.5);
+
+        const tableTop = doc.y;
+        const itemX = 50;
+        const qtyX = 300;
+        const priceX = 400;
+        const totalX = 500;
+
+        // Table headers
+        doc.fontSize(10).text('Producto', itemX, tableTop);
+        doc.text('Cant.', qtyX, tableTop);
+        doc.text('Precio', priceX, tableTop);
+        doc.text('Total', totalX, tableTop);
+
+        doc.moveTo(50, doc.y + 5).lineTo(550, doc.y + 5).stroke();
+
+        let y = doc.y + 15;
+        sale.SaleItems.forEach(item => {
+            doc.fontSize(10).text(item.Product.nombre, itemX, y);
+            doc.text(item.cantidad.toString(), qtyX, y);
+            doc.text(`$${parseFloat(item.precio_unitario).toLocaleString()}`, priceX, y);
+            doc.text(`$${(item.cantidad * parseFloat(item.precio_unitario)).toLocaleString()}`, totalX, y);
+            y += 20;
+        });
+
+        doc.moveTo(50, y).lineTo(550, y).stroke();
+        y += 10;
+
+        // Totales
+        doc.fontSize(12).text(`Subtotal: $${parseFloat(sale.subtotal).toLocaleString()}`, 400, y);
+        y += 15;
+        doc.text(`IVA (19%): $${parseFloat(sale.iva).toLocaleString()}`, 400, y);
+        y += 15;
+        doc.font('Helvetica-Bold').text(`Total: $${parseFloat(sale.total).toLocaleString()}`, 400, y);
+        y += 20;
+
+        // Método de pago
+        doc.font('Helvetica').fontSize(12).text(`Método de Pago: ${sale.metodo_pago}`, 50, y);
+
+        doc.end();
+
+        return new Promise((resolve, reject) => {
+            doc.on('end', () => {
+                const pdfBuffer = Buffer.concat(buffers);
+                resolve(pdfBuffer);
+            });
+            doc.on('error', reject);
+        });
     }
 }
 

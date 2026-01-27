@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, Bell, DollarSign, Package, PlusCircle, ShoppingBag, TrendingUp, Users } from 'lucide-react';
+import { Activity, AlertTriangle, Bell, DollarSign, FileText, Package, PlusCircle, ShoppingBag, TrendingUp, Users } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
@@ -7,6 +7,7 @@ import { useAuth } from '../auth/AuthContext';
 import { useDashboard } from '../auth/DashboardContext';
 import Layout from '../components/layout/Layout';
 import Modal from '../components/Modal';
+import api from '../api/axios';
 
 import '../styles/Dashboard.css';
 
@@ -42,6 +43,11 @@ export default function Dashboard() {
 function SellerDashboard({ data }) {
     const { today, recentSales, lowStockProducts } = data;
     const [showLowStockModal, setShowLowStockModal] = useState(false);
+    const [showPDFModal, setShowPDFModal] = useState(false);
+    const [showSaleDetailsModal, setShowSaleDetailsModal] = useState(false);
+    const [selectedSale, setSelectedSale] = useState(null);
+    const [sales, setSales] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         // Mostrar modal si hay productos con stock bajo al cargar el dashboard
@@ -49,6 +55,61 @@ function SellerDashboard({ data }) {
             setShowLowStockModal(true);
         }
     }, [lowStockProducts]);
+
+    const fetchSales = async () => {
+        try {
+            const response = await api.get('/sales');
+            console.log('Sales fetched:', response.data);
+            setSales(response.data);
+        } catch (error) {
+            console.error('Error fetching sales:', error);
+        }
+    };
+
+    const openPDFModal = async () => {
+        console.log('Opening PDF modal');
+        await fetchSales();
+        setShowPDFModal(true);
+    };
+
+    const openPDF = async (saleId) => {
+        try {
+            const response = await api.get(`/sales/${saleId}/pdf`, {
+                responseType: 'blob'
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `factura-${saleId}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading PDF:', error);
+            alert('Error al descargar el PDF');
+        }
+    };
+
+    const viewSaleDetails = async (saleId) => {
+        try {
+            const response = await api.get(`/sales/${saleId}`);
+            setSelectedSale(response.data);
+            setShowSaleDetailsModal(true);
+        } catch (error) {
+            console.error('Error fetching sale details:', error);
+            alert('Error al obtener los detalles de la venta');
+        }
+    };
+
+    // Filtrar ventas basándose en el término de búsqueda
+    const filteredSales = sales.filter((sale) => {
+        if (!searchTerm) return true;
+        const clientName = sale.Client ? `${sale.Client.nombre} ${sale.Client.apellido}`.toLowerCase() : 'anónimo';
+        const clientDoc = sale.Client ? sale.Client.documento.toLowerCase() : '';
+        const searchLower = searchTerm.toLowerCase();
+        return clientName.includes(searchLower) || clientDoc.includes(searchLower);
+    });
 
     return (
         <Layout>
@@ -66,13 +127,65 @@ function SellerDashboard({ data }) {
                     ))}
                 </ul>
             </Modal>
+            <Modal
+                isOpen={showPDFModal}
+                onClose={() => setShowPDFModal(false)}
+                title="PDFs de Ventas"
+            >
+                {console.log('Modal rendering with showPDFModal:', showPDFModal, 'sales:', sales)}
+                <div style={{ marginBottom: '20px' }}>
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre o cédula..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{
+                            width: '100%',
+                            padding: '10px',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            fontSize: '14px'
+                        }}
+                    />
+                </div>
+                <p>Haz clic en cualquier venta para descargar su factura en PDF:</p>
+                <div className="pdf-list">
+                    {filteredSales.map((sale) => (
+                        <div
+                            key={sale.id}
+                            className="pdf-item"
+                            onClick={() => openPDF(sale.id)}
+                        >
+                            <div className="pdf-info">
+                                <strong>Factura #{sale.id}</strong>
+                                <span>
+                                    {sale.Client ? `${sale.Client.nombre} ${sale.Client.apellido}` : 'Anónimo'} -
+                                    ${parseFloat(sale.total).toLocaleString()} -
+                                    {new Date(sale.createdAt).toLocaleDateString('es-ES')}
+                                </span>
+                            </div>
+                        </div>
+                    ))}
+                    {filteredSales.length === 0 && searchTerm && (
+                        <p style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                            No se encontraron facturas que coincidan con la búsqueda.
+                        </p>
+                    )}
+                </div>
+            </Modal>
             <div className="dashboard-container">
                 <div className="dashboard-header">
                     <h1>Hola, Vendedor</h1>
-                    <Link to="/sales/new" className="btn-success btn-lg">
-                        <PlusCircle size={24} />
-                        Nueva Venta (POS)
-                    </Link>
+                    <div className="header-actions">
+                        <button onClick={openPDFModal} className="btn btn-primary">
+                            <FileText size={20} />
+                            PDFs de Ventas
+                        </button>
+                        <Link to="/sales/new" className="btn-success btn-lg">
+                            <PlusCircle size={24} />
+                            Nueva Venta (POS)
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="stats-grid">

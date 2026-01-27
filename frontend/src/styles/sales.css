@@ -613,6 +613,78 @@
     text-decoration: underline;
 }
 
+/* Client Summary */
+.client-summary {
+    margin-bottom: 20px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.client-summary h4 {
+    margin: 0 0 8px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.client-summary p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+/* Products Summary */
+.products-summary {
+    margin-bottom: 20px;
+}
+
+.products-summary h4 {
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.products-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.product-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+}
+
+.product-item:last-child {
+    border-bottom: none;
+}
+
+.product-name {
+    flex: 1;
+    font-weight: 500;
+    color: #1e293b;
+}
+
+.product-qty {
+    margin: 0 12px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.product-price {
+    font-weight: 600;
+    color: #059669;
+}
+
 /* Payment Methods */
 .payment-methods {
     display: grid;

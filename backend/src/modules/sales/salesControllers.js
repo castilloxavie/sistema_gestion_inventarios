@@ -17,9 +17,11 @@ class SaleController {
 
     async getSale(req, res) {
         try {
-            const sale = await SalesServices.getAllSales()
-            console.log("Se obtuvieron todas las Ventas");
-            res.json(sale)
+            const userId = req.user?.id;
+            const userRole = req.user?.rol;
+            const sales = await SalesServices.getAllSales(userId, userRole)
+            console.log("Se obtuvieron las Ventas");
+            res.json(sales)
 
         } catch (error) {
             console.log("Error no se pudieron obtener las ventas", error.message);
@@ -29,13 +31,29 @@ class SaleController {
 
     async getSaleById (req, res) {
         try {
-            const sale = await SalesServices.getSaleById(req.params.id)
+            const userId = req.user?.id;
+            const userRole = req.user?.rol;
+            const sale = await SalesServices.getSaleById(req.params.id, userId, userRole)
             console.log("Venta encontrada: ", sale);
             res.json(sale)
 
         } catch (error) {
             console.log("Error no se pudo obtener la venta", error.message);
             res.status(500).json({error: error.message})
+        }
+    }
+
+    async generatePDF(req, res) {
+        try {
+            const userId = req.user?.id;
+            const userRole = req.user?.rol;
+            const pdfBuffer = await SalesServices.generateSalePDF(req.params.id, userId, userRole);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename=factura-${req.params.id}.pdf`);
+            res.send(pdfBuffer);
+        } catch (error) {
+            console.log("Error al generar PDF", error.message);
+            res.status(500).json({error: error.message});
         }
     }
 }

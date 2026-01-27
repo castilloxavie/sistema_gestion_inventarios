@@ -246,6 +246,36 @@ export default function SalesForm() {
 
                 <div className="summary-section card">
                     <h3>Resumen de Pago</h3>
+
+                    {/* Información del Cliente */}
+                    {client ? (
+                        <div className="client-summary">
+                            <h4>Cliente</h4>
+                            <p><strong>{client.nombre} {client.apellido}</strong></p>
+                            <p>Cédula: {client.documento}</p>
+                        </div>
+                    ) : (
+                        <div className="client-summary">
+                            <p><em>Venta Anónima</em></p>
+                        </div>
+                    )}
+
+                    {/* Lista de Productos */}
+                    <div className="products-summary">
+                        <h4>Productos</h4>
+                        <div className="products-list">
+                            {items.filter(item => item.product_id).map((item, index) => {
+                                const product = products.find(p => p.id === item.product_id);
+                                return (
+                                    <div key={item.id} className="product-item">
+                                        <span className="product-name">{product?.nombre || 'Producto desconocido'}</span>
+                                        <span className="product-qty">x{item.quantity}</span>
+                                        <span className="product-price">${(item.quantity * item.price).toLocaleString()}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
                     
                     <div className="payment-methods">
                         <label className={`method-card ${paymentMethod === 'efectivo' ? 'active' : ''}`}>
