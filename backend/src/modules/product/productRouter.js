@@ -13,7 +13,7 @@ router.use(authMiddleware)
 router.get("/", roleMiddleware(["admin", "vendedor"]), (req, res) => proeducController.getAllProduct(req, res))
 router.get("/:id", roleMiddleware(["admin", "vendedor"]), (req, res) => proeducController.getByIdProduct(req, res))
 router.post("/", roleMiddleware(["admin"]), (req, res) => proeducController.createProduct(req, res))
-router.put("/:id", roleMiddleware(["admin", "vendedor"]), (req, res) => proeducController.updateProduct(req, res))
+router.put("/:id", roleMiddleware(["admin"]), (req, res) => proeducController.updateProduct(req, res))
 router.delete("/:id", roleMiddleware(["admin"]), (req, res) => proeducController.deleteProduct(req, res))
 
 export default router

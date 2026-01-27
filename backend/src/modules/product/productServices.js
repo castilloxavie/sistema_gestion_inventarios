@@ -1,12 +1,24 @@
+import { Op } from "sequelize";
+
 import { InventoryMovement } from "../../models/InventoryMovementModels.js"
 import { Products } from "../../models/ProducsModels.js"
 
 class ProductServices {
-    async getAllProduct() {
+    async getAllProduct(search = null) {
+        let whereCondition = { estado: 1 };
+
+        if (search) {
+            whereCondition = {
+                ...whereCondition,
+                [Op.or]: [
+                    { nombre: { [Op.like]: `%${search}%` } },
+                    { codigo: { [Op.like]: `%${search}%` } }
+                ]
+            };
+        }
+
         return await Products.findAll({
-            where: {
-                estado: 1
-            }
+            where: whereCondition
         })
     }
 

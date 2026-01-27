@@ -3,7 +3,8 @@ import ProductServices from "./productServices.js";
 class ProductControllers {
     async getAllProduct(req, res) {
         try {
-            const product = await ProductServices.getAllProduct()
+            const { search } = req.query;
+            const product = await ProductServices.getAllProduct(search)
             console.log("Se obtuvo todos los Productos");
             res.json(product)
 
