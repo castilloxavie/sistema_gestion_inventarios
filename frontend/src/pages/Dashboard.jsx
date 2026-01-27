@@ -46,9 +46,9 @@ function SellerDashboard({ data }) {
             <div className="dashboard-container">
                 <div className="dashboard-header">
                     <h1>Hola, Vendedor</h1>
-                    <Link to="/sales" className="btn-primary">
-                        <PlusCircle size={20} />
-                        Nueva Venta
+                    <Link to="/sales/new" className="btn-success btn-lg">
+                        <PlusCircle size={24} />
+                        Nueva Venta (POS)
                     </Link>
                 </div>
 

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useDashboard } from "../../auth/DashboardContext";
+import Modal from "../../components/Modal";
 import { createInventoryMovement } from "../../services/inventoryServices";
 import { getProducts } from "../../services/productServices";
 import { getProviders } from "../../services/providersServices";
-import Modal from "../../components/Modal";
-import { useDashboard } from "../../auth/DashboardContext";
 
 import "../../styles/inventory.css";
 
@@ -113,8 +113,9 @@ export default function InventoryForm() {
                         name="provider_id"
                         value={form.provider_id}
                         onChange={handleChange}
+                        required
                     >
-                        <option value="">Seleccione un Proveedor (Opcional)</option>
+                        <option value="">Seleccione un Proveedor</option>
                         {providers.map((p) => (
                             <option key={p.id} value={p.id}>
                                 {p.nombre}

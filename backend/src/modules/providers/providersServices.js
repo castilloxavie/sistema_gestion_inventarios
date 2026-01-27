@@ -1,6 +1,6 @@
 import { where } from "sequelize";
-import { Provider } from "../../models/ProviderModels.js";
 
+import { Provider } from "../../models/ProviderModels.js";
 
 class ProviderServices {
     async getAllProviders() {
@@ -23,13 +23,15 @@ class ProviderServices {
     async createProviders(data) {
         const{nombre, telefono, email, direccion} = data
 
-        const isExists = await Provider.findOne({where: {email}})
+        const trimmedEmail = email.trim()
+
+        const isExists = await Provider.findOne({where: {email: trimmedEmail}})
         if(isExists) throw new Error("Provedor ya existe")
-        
+
         const providers = await Provider.create({
             nombre,
-            telefono, 
-            email, 
+            telefono,
+            email: trimmedEmail,
             direccion,
             estado: 1
         })

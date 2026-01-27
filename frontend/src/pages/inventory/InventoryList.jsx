@@ -1,6 +1,6 @@
+import { Home } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Home } from "lucide-react";
 
 import { getInventoryMovements } from "../../services/inventoryServices";
 
@@ -54,7 +54,7 @@ export default function InventoryList() {
                                     {m.tipo || "N/A"}
                                 </td>
                                 <td>{m.cantidad || 0}</td>
-                                <td>{m.Provider?.nombre || "-"}</td>
+                                <td>{m.Provider?.nombre || m.Product?.Provider?.nombre || "-"}</td>
                             </tr>
                         ))}
                     </tbody>

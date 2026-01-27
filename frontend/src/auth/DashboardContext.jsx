@@ -1,4 +1,5 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
 import api from '../api/axios';
 import { useAuth } from './AuthContext';
 
@@ -23,11 +24,21 @@ export const DashboardProvider = ({ children }) => {
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
             // Mantener datos antiguos si la recarga falla, o establecerlos en nulos
-            // setData(null); 
+            // setData(null);
         } finally {
             setLoading(false);
         }
     };
+
+    // Refetch data when user changes
+    useEffect(() => {
+        if (user) {
+            fetchDashboardData();
+        } else {
+            setData(null);
+            setLoading(false);
+        }
+    }, [user]);
 
     const value = {
         dashboardData: data,

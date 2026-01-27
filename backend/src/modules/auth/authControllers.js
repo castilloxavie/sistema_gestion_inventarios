@@ -25,7 +25,6 @@ class AuthController {
         try {
             //validar el login
             const { token, user } = await authServices.login(req.body)
-            console.log("Usuario Logueado correctamente");
             const { password, ...userWithoutPassword } = user.toJSON();
             return res.status(200).json({
                 data: { token, user: userWithoutPassword }
@@ -33,7 +32,6 @@ class AuthController {
 
 
         } catch (error) {
-            console.error("Error al procesar el login", error.message);
             return res.status(400).json({
                 message: error.message
             })

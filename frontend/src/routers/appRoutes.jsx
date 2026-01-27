@@ -21,7 +21,7 @@ export default function AppRoutes() {
                 <Route path="/" element={<Navigate to="/login" replace />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/dashboard" element={<ProtectedRouter role={["admin"]}> <Dashboard /> </ProtectedRouter>} />
+                <Route path="/dashboard" element={<ProtectedRouter role={["admin", "vendedor"]}> <Dashboard /> </ProtectedRouter>} />
                 <Route path="/products" element = {<ProtectedRouter role={["admin", "vendedor"]}> <ProductList /> </ProtectedRouter>} />
                 <Route path="/products/new" element = {<ProtectedRouter role={["admin", "vendedor"]}> <ProductForm /> </ProtectedRouter>} />
                 <Route path="/products/:id" element = {<ProtectedRouter role={["admin", "vendedor"]}> <ProductForm /> </ProtectedRouter>} />

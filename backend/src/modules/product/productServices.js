@@ -1,5 +1,5 @@
-import { Products } from "../../models/ProducsModels.js"
 import { InventoryMovement } from "../../models/InventoryMovementModels.js"
+import { Products } from "../../models/ProducsModels.js"
 
 class ProductServices {
     async getAllProduct() {
@@ -22,7 +22,7 @@ class ProductServices {
 
     async createProducto(data) {
 
-        const {nombre, codigo, categoria, precio, stock} = data
+        const {nombre, codigo, categoria, precio, stock, proveedor_id} = data
 
         //validar si el producto ya existe mediante código
         const isExists = await Products.findOne({where: {codigo: codigo}})
@@ -34,6 +34,7 @@ class ProductServices {
             categoria,
             precio,
             stock,
+            proveedor_id,
             estado: 1
         })
 
@@ -41,6 +42,7 @@ class ProductServices {
         if (stock > 0) {
             await InventoryMovement.create({
                 producto_id: product.id,
+                provider_id: proveedor_id || null,
                 tipo: "entrada",
                 cantidad: stock,
                 descripcion: "Stock inicial al crear producto"
@@ -67,6 +69,7 @@ class ProductServices {
             if (difference > 0) {
                 await InventoryMovement.create({
                     producto_id: id,
+                    provider_id: updatedProduct.proveedor_id || null,
                     tipo: "entrada",
                     cantidad: difference,
                     descripcion: "Aumento de stock al actualizar producto"
@@ -74,6 +77,7 @@ class ProductServices {
             } else if (difference < 0) {
                 await InventoryMovement.create({
                     producto_id: id,
+                    provider_id: updatedProduct.proveedor_id || null,
                     tipo: "salida",
                     cantidad: Math.abs(difference),
                     descripcion: "Disminución de stock al actualizar producto"
