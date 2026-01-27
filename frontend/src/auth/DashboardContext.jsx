@@ -40,6 +40,21 @@ export const DashboardProvider = ({ children }) => {
         }
     }, [user]);
 
+    // Listen for saleCreated event to refresh dashboard
+    useEffect(() => {
+        const handleSaleCreated = () => {
+            if (user) {
+                fetchDashboardData();
+            }
+        };
+
+        window.addEventListener('saleCreated', handleSaleCreated);
+
+        return () => {
+            window.removeEventListener('saleCreated', handleSaleCreated);
+        };
+    }, [user, fetchDashboardData]);
+
     const value = {
         dashboardData: data,
         loading,

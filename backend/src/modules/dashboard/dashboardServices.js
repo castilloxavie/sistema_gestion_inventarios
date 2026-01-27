@@ -1,12 +1,13 @@
+import { Op } from "sequelize";
+
+import { sequelize } from "../../config/databases.js";
+import { Client } from "../../models/ClientModels.js";
+import { InventoryMovement } from "../../models/InventoryMovementModels.js";
 import  { Products }  from "../../models/ProducsModels.js";
 import { Provider } from "../../models/ProviderModels.js";
-import { User } from "../../models/UserModels.js";
-import { Sale } from "../../models/SaleModels.js";
 import { SaleItem } from "../../models/SaleItemModels.js";
-import { InventoryMovement } from "../../models/InventoryMovementModels.js";
-import { Client } from "../../models/ClientModels.js";
-import { sequelize } from "../../config/databases.js";
-import { Op } from "sequelize";
+import { Sale } from "../../models/SaleModels.js";
+import { User } from "../../models/UserModels.js";
 
 class DashBoardServices {
     async getStarts () {
@@ -51,6 +52,15 @@ class DashBoardServices {
             order: [["createdAt", "ASC"]]
         })
 
+        // Productos con stock bajo (crítico < 10)
+        const lowStockProducts = await Products.findAll({
+            where: {
+                stock: { [Op.lt]: 10 },
+                estado: 1
+            },
+            attributes: ['id', 'nombre', 'codigo', 'stock']
+        });
+
         return {
             totals: {
                 totalProducts,
@@ -64,7 +74,8 @@ class DashBoardServices {
                 topProducts,
                 lastMovements,
                 last7Days
-            }
+            },
+            lowStockProducts
         }
     }
 

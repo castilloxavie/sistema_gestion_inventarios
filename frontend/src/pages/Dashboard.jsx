@@ -1,11 +1,12 @@
-import { Activity, AlertTriangle, DollarSign, Package, PlusCircle, ShoppingBag, TrendingUp, Users } from 'lucide-react';
-import React, { useEffect } from 'react';
+import { Activity, AlertTriangle, Bell, DollarSign, Package, PlusCircle, ShoppingBag, TrendingUp, Users } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import { useAuth } from '../auth/AuthContext';
 import { useDashboard } from '../auth/DashboardContext';
 import Layout from '../components/layout/Layout';
+import Modal from '../components/Modal';
 
 import '../styles/Dashboard.css';
 
@@ -40,9 +41,31 @@ export default function Dashboard() {
 
 function SellerDashboard({ data }) {
     const { today, recentSales, lowStockProducts } = data;
+    const [showLowStockModal, setShowLowStockModal] = useState(false);
+
+    useEffect(() => {
+        // Mostrar modal si hay productos con stock bajo al cargar el dashboard
+        if (lowStockProducts && lowStockProducts.length > 0) {
+            setShowLowStockModal(true);
+        }
+    }, [lowStockProducts]);
 
     return (
         <Layout>
+            <Modal
+                isOpen={showLowStockModal}
+                onClose={() => setShowLowStockModal(false)}
+                title="Alerta de Stock Bajo"
+            >
+                <p>Los siguientes productos tienen un stock inferior a 10 unidades:</p>
+                <ul>
+                    {lowStockProducts.map((product) => (
+                        <li key={product.id}>
+                            <strong>{product.nombre}</strong> - Stock: {product.stock}
+                        </li>
+                    ))}
+                </ul>
+            </Modal>
             <div className="dashboard-container">
                 <div className="dashboard-header">
                     <h1>Hola, Vendedor</h1>
@@ -137,7 +160,16 @@ function SellerDashboard({ data }) {
 }
 
 function AdminDashboard({ data }) {
-    const { totals, charts } = data;
+    const { totals, charts, lowStockProducts } = data;
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [showLowStockModal, setShowLowStockModal] = useState(false);
+
+    useEffect(() => {
+        // Mostrar modal si hay productos con stock bajo al cargar el dashboard
+        if (lowStockProducts && lowStockProducts.length > 0) {
+            setShowLowStockModal(true);
+        }
+    }, [lowStockProducts]);
 
     // Prepare chart data
     const topProductsData = charts.topProducts.map(item => ({
@@ -159,7 +191,48 @@ function AdminDashboard({ data }) {
 
     return (
         <Layout>
+            <Modal
+                isOpen={showLowStockModal}
+                onClose={() => setShowLowStockModal(false)}
+                title="Alerta de Stock Bajo"
+            >
+                <p>Los siguientes productos tienen un stock inferior a 10 unidades:</p>
+                <ul>
+                    {lowStockProducts.map((product) => (
+                        <li key={product.id}>
+                            <strong>{product.nombre}</strong> - Código: {product.codigo} - Stock: {product.stock}
+                        </li>
+                    ))}
+                </ul>
+            </Modal>
             <div className="dashboard-container">
+                <div className="dashboard-header">
+                    <h1>Panel de Administración</h1>
+                    <div className="notification-container">
+                        <button
+                            className="notification-bell"
+                            onClick={() => setShowNotifications(!showNotifications)}
+                        >
+                            <Bell size={24} />
+                            {lowStockProducts && lowStockProducts.length > 0 && (
+                                <span className="notification-badge">{lowStockProducts.length}</span>
+                            )}
+                        </button>
+                        {showNotifications && lowStockProducts && lowStockProducts.length > 0 && (
+                            <div className="notification-dropdown">
+                                <h4>Productos con Stock Bajo</h4>
+                                {lowStockProducts.map((product) => (
+                                    <div key={product.id} className="notification-item">
+                                        <strong>{product.nombre}</strong><br />
+                                        Código: {product.codigo}<br />
+                                        Stock: {product.stock}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 {/* Stats Cards */}
                 <div className="stats-grid">
                     <StatCard 

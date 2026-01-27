@@ -1,12 +1,12 @@
+import { Banknote, CreditCard, Landmark, Search, UserPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, UserPlus, CreditCard, Banknote, Landmark } from "lucide-react";
 
 import { useAuth } from "../../auth/AuthContext";
 import SaleItemRow from "../../components/sales/SalesItemRow";
+import { createClient, getClientByDocument } from "../../services/clientServices";
 import { getProducts } from "../../services/productServices";
 import { createSales } from "../../services/salesServices";
-import { getClientByDocument, createClient } from "../../services/clientServices";
 
 import "../../styles/sales.css"
 
@@ -140,6 +140,10 @@ export default function SalesForm() {
             };
             await createSales(payload);
             setSuccess("Venta registrada exitosamente");
+
+            // Disparar evento para refrescar dashboard
+            window.dispatchEvent(new CustomEvent('saleCreated'));
+
             setTimeout(() => navigate("/sales"), 2000);
         } catch (err) {
             setError(err.response?.data?.error || "Error al registrar la venta");
