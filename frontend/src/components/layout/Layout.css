@@ -1,13 +1,14 @@
-:root {
-    --primary-color: #4f46e5; /* A more modern shade of purple */
-    --secondary-color: #6366f1; /* Complementary muted indigo */
-    --sidebar-bg: rgba(17, 24, 39, 0.85); /* Enhanced transparency for glassmorphism */
-    --sidebar-text: #d1d5db;
+/* Layout specific variables */
+.layout-container {
+    --primary-color: var(--accent-purple);
+    --secondary-color: var(--accent-blue);
+    --sidebar-bg: rgba(17, 24, 39, 0.85);
+    --sidebar-text: var(--text-secondary);
     --sidebar-hover: rgba(55, 65, 81, 0.95);
-    --navbar-bg: rgba(255, 255, 255, 0.95); /* Subtle transparency */
-    --bg-color: #f8fafc; /* Slightly cooler background */
-    --text-color: #1f2937;
-    --accent-shadow: rgba(79, 70, 229, 0.15); /* Soft accent shadow */
+    --navbar-bg: var(--bg-secondary);
+    --bg-color: var(--bg-primary);
+    --text-color: var(--text-primary);
+    --accent-shadow: rgba(139, 92, 246, 0.15);
 }
 
 .layout-container {

@@ -15,11 +15,14 @@ Un sistema de gestión de inventarios completo (full-stack) diseñado para admin
     - [Frontend](#frontend)
   - [Estructura del Proyecto](#estructura-del-proyecto)
   - [Pre-requisitos](#pre-requisitos)
-  - [Notas Adicionales](#notas-adicionales)
-  - [Instalación](#instalación)
+  - [Instalación y Configuración](#instalación-y-configuración)
   - [Uso](#uso)
     - [Backend](#backend-1)
     - [Frontend](#frontend-1)
+  - [Guía de Usuarios](#guía-de-usuarios)
+    - [Administrador](#administrador)
+    - [Vendedor](#vendedor)
+    - [Auditor](#auditor)
   - [Endpoints de la API](#endpoints-de-la-api)
 
 ## Características Principales
@@ -80,35 +83,81 @@ Un sistema de gestión de inventarios completo (full-stack) diseñado para admin
 
 -   [Node.js](https://nodejs.org/) (versión 18 o superior)
 -   [npm](https://www.npmjs.com/)
--   Un servidor de [MySQL](https://www.mysql.com/)
+-   Un servidor de [MySQL](https://www.mysql.com/) activo.
 
-## Notas Adicionales
+## Instalación y Configuración
 
--   El proyecto utiliza módulos ES6 (ES modules), por lo que las importaciones y exportaciones siguen la sintaxis moderna de JavaScript.
--   Para sembrar datos iniciales de inventario, ejecuta el script `seedInventory.js` en el directorio backend.
--   Asegúrate de configurar correctamente las variables de entorno en los archivos `.env` basados en los ejemplos proporcionados.
+Sigue estos pasos para configurar y ejecutar el proyecto en tu entorno local.
 
-## Instalación
+**1. Clonar el Repositorio**
 
-1.  Clona el repositorio:
-    ```bash
-    git clone https://github.com/castilloxavie/sistema_gestion_inventarios.git
-    cd sistema_gestion_inventarios
-    ```
+```bash
+git clone https://github.com/castilloxavie/sistema_gestion_inventarios.git
+cd sistema_gestion_inventarios
+```
 
-2.  **Configura el Backend:**
-    ```bash
-    cd backend
-    npm install
-    ```
-    -   Renombra `.env.example` a `.env` y configura tus variables de entorno (base de datos, clave secreta JWT, etc.).
+**2. Configuración del Backend**
 
-3.  **Configura el Frontend:**
-    ```bash
-    cd ../frontend
-    npm install
-    ```
-    -   Renombra `.env.example` a `.env` y, si es necesario, ajusta la URL de la API (`VITE_API_URL`).
+a. **Navega al directorio del backend e instala las dependencias:**
+```bash
+cd backend
+npm install
+```
+
+b. **Configura las variables de entorno:**
+   - Renombra el archivo `.env.example` a `.env`.
+   - Edita el archivo `.env` con las credenciales de tu base de datos y otras configuraciones.
+
+   ```ini
+   # Configuracion de la base de datos
+   DB_HOST=localhost
+   DB_USER=tu_usuario_mysql
+   DB_PASSWORD=tu_contraseña_mysql
+   DB_NAME=inventory_system
+
+   # Configuracion del servidor
+   PORT=3000
+   NODE_ENV=development
+
+   # Token de seguridad para JWT (cambia 'secret' por una clave segura)
+   SECURITY_TOKEN_JWT=tu_clave_secreta_super_segura
+   ```
+
+c. **Crea la base de datos:**
+   Asegúrate de que tu servidor MySQL esté en ejecución. Conéctate a MySQL y crea la base de datos especificada en tu archivo `.env`.
+
+   ```sql
+   CREATE DATABASE IF NOT EXISTS inventory_system;
+   ```
+
+d. **(Opcional) Poblar la base de datos con datos de ejemplo:**
+   El proyecto incluye un script para añadir datos iniciales al inventario. Para ejecutarlo, usa el siguiente comando desde el directorio `backend`:
+
+   ```bash
+   node seedInventory.js
+   ```
+
+**3. Configuración del Frontend**
+
+a. **Navega al directorio del frontend e instala las dependencias:**
+```bash
+# Desde la raíz del proyecto, si estás en la carpeta backend
+cd ../frontend 
+
+# O desde la raíz del proyecto
+# cd frontend
+
+npm install
+```
+
+b. **Configura las variables de entorno:**
+   - Renombra el archivo `.env.example` a `.env`.
+   - Asegúrate de que la variable `VITE_API_URL` apunte a la URL de tu backend. El valor por defecto suele ser correcto para el desarrollo local.
+
+   ```ini
+   # URL de la API del backend
+   VITE_API_URL=http://localhost:3000/api
+   ```
 
 ## Uso
 
@@ -136,6 +185,51 @@ npm run dev
 
 La aplicación estará disponible en `http://localhost:5173`.
 
+## Guía de Usuarios
+
+Esta sección describe las funcionalidades y pasos iniciales para cada tipo de usuario en el sistema. Cada rol tiene permisos específicos para gestionar diferentes aspectos del inventario.
+
+### Administrador
+El administrador tiene acceso completo al sistema y es responsable de la configuración inicial y gestión general.
+
+**Pasos iniciales recomendados:**
+1. **Registrar proveedores:** Antes de agregar productos, crea proveedores para asociarlos. Ve a la sección de Proveedores y registra al menos uno con nombre, contacto y detalles.
+2. **Agregar productos asociados a proveedores:** Una vez creados los proveedores, agrega productos vinculándolos a un proveedor específico. Esto asegura trazabilidad y facilita la gestión de stock.
+3. **Crear usuarios adicionales:** Registra vendedores o auditores según sea necesario, asignando roles apropiados.
+4. **Configurar inventario inicial:** Registra movimientos de entrada para productos existentes para establecer stock base.
+5. **Revisar dashboard:** Monitorea métricas clave como ventas totales y productos con bajo stock.
+
+**Funcionalidades principales:**
+- Gestión completa de usuarios, productos, proveedores y clientes.
+- Acceso a todas las ventas y movimientos de inventario.
+- Generación de reportes y análisis de datos.
+
+### Vendedor
+El vendedor se enfoca en las operaciones diarias de ventas y gestión de inventario básico.
+
+**Pasos iniciales recomendados:**
+1. **Revisar productos disponibles:** Verifica el stock actual en la lista de productos.
+2. **Registrar ventas:** Crea nuevas ventas asociando productos y clientes.
+3. **Actualizar inventario:** Registra movimientos de salida cuando se vendan productos.
+4. **Monitorear clientes:** Agrega o actualiza información de clientes para futuras ventas.
+
+**Funcionalidades principales:**
+- Registro y gestión de ventas.
+- Acceso limitado a productos y proveedores (solo lectura y edición básica).
+- Visualización de movimientos de inventario.
+
+### Auditor
+El auditor tiene acceso de solo lectura para supervisar y reportar actividades.
+
+**Pasos iniciales recomendados:**
+1. **Revisar dashboard:** Examina métricas generales del negocio.
+2. **Consultar registros:** Revisa listas de usuarios, productos, proveedores, ventas e inventario sin poder modificar.
+3. **Generar reportes:** Utiliza la información para análisis y auditorías.
+
+**Funcionalidades principales:**
+- Acceso de solo lectura a todas las secciones.
+- No puede crear, editar o eliminar registros.
+
 ## Endpoints de la API
 
 La API requiere un token JWT en la cabecera `Authorization` para las rutas protegidas.
@@ -149,19 +243,19 @@ La API requiere un token JWT en la cabecera `Authorization` para las rutas prote
 | `GET`  | `/api/users`                | Obtiene todos los usuarios.        | `admin`              |
 | `GET`  | `/api/users/:id`            | Obtiene un usuario por ID.         | `admin`, `vendedor`  |
 | `POST` | `/api/users`                | Crea un nuevo usuario.             | `admin`              |
-| `PUT`  | `/api/users/:id`            | Actualiza un usuario.              | `admin`              |
+| `PUT` | `/api/users/:id`            | Actualiza un usuario.              | `admin`              |
 | `DELETE` | `/api/users/:id`          | Elimina un usuario.                | `admin`              |
 | **Products** |
 | `GET`  | `/api/products`             | Obtiene todos los productos.       | `admin`              |
 | `GET`  | `/api/products/:id`         | Obtiene un producto por ID.        | `admin`, `vendedor`  |
 | `POST` | `/api/products`             | Crea un nuevo producto.            | `admin`              |
-| `PUT`  | `/api/products/:id`         | Actualiza un producto.             | `admin`, `vendedor`  |
+| `PUT` | `/api/products/:id`         | Actualiza un producto.             | `admin`, `vendedor`  |
 | `DELETE` | `/api/products/:id`       | Elimina un producto.               | `admin`              |
 | **Providers** |
 | `GET`  | `/api/providers`            | Obtiene todos los proveedores.     | `admin`              |
 | `GET`  | `/api/providers/:id`        | Obtiene un proveedor por ID.       | `admin`, `vendedor`  |
 | `POST` | `/api/providers`            | Crea un nuevo proveedor.           | `admin`              |
-| `PUT`  | `/api/providers/:id`        | Actualiza un proveedor.            | `admin`, `vendedor`  |
+| `PUT` | `/api/providers/:id`        | Actualiza un proveedor.            | `admin`, `vendedor`  |
 | `DELETE` | `/api/providers/:id`      | Elimina un proveedor.              | `admin`              |
 | **Inventory** |
 | `GET`  | `/api/inventory`            | Obtiene movimientos de inventario. | `admin`, `vendedor`  |

@@ -7,9 +7,15 @@ import { useAuth } from '../auth/AuthContext';
 import { useDashboard } from '../auth/DashboardContext';
 import Layout from '../components/layout/Layout';
 import Modal from '../components/Modal';
+import PerformanceMetrics from '../components/dashboard/PerformanceMetrics';
+import ClientManagement from '../components/dashboard/ClientManagement';
+import SellerTools from '../components/dashboard/SellerTools';
 import api from '../api/axios';
 
 import '../styles/Dashboard.css';
+import '../styles/PerformanceMetrics.css';
+import '../styles/ClientManagement.css';
+import '../styles/SellerTools.css';
 
 export default function Dashboard() {
     const { dashboardData, loading, fetchDashboardData } = useDashboard();
@@ -239,8 +245,8 @@ function SellerDashboard({ data }) {
 
                     <div className="chart-card">
                         <div className="chart-header" style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
-                            <AlertTriangle size={20} color="#ef4444" />
-                            <h3 className="chart-title" style={{color: '#ef4444'}}>Alerta Stock Bajo</h3>
+                            <AlertTriangle size={20} color="var(--accent-red)" />
+                            <h3 className="chart-title" style={{color: 'var(--accent-red)'}}>Alerta Stock Bajo</h3>
                         </div>
                         <div className="table-container">
                             <table className="activity-table">
@@ -254,7 +260,7 @@ function SellerDashboard({ data }) {
                                     {lowStockProducts.map((product) => (
                                         <tr key={product.id}>
                                             <td>{product.nombre}</td>
-                                            <td style={{fontWeight: 'bold', color: '#ef4444'}}>{product.stock}</td>
+                                            <td style={{fontWeight: 'bold', color: 'var(--accent-red)'}}>{product.stock}</td>
                                         </tr>
                                     ))}
                                      {lowStockProducts.length === 0 && (
@@ -266,6 +272,12 @@ function SellerDashboard({ data }) {
                             </table>
                         </div>
                     </div>
+
+                    <PerformanceMetrics data={data} />
+
+                    <ClientManagement />
+
+                    <SellerTools />
                 </div>
             </div>
         </Layout>
