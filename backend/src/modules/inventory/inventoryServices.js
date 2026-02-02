@@ -1,3 +1,4 @@
+import { sequelize } from "../../config/databases.js"
 import { InventoryMovement } from "../../models/InventoryMovementModels.js"
 import { Products } from "../../models/ProductsModels.js"
 import { Provider } from "../../models/ProviderModels.js"
@@ -7,36 +8,45 @@ class InventoryServices {
     async createInventory(data){
         const {product_id, provider_id, type, quantity } = data
 
-        const product = await Products.findByPk(product_id)
-        if(!product) throw new Error("El producto no existe")
+        const secureTransaction = await sequelize.transaction()
 
-        const numericQuantity = parseInt(quantity, 10);
-        if (isNaN(numericQuantity) || numericQuantity <= 0) {
-            throw new Error("La cantidad debe ser un número válido mayor a cero");
-        }
+        try {
+            const product = await Products.findByPk(product_id, { transaction: secureTransaction })
+            if(!product) throw new Error("El producto no existe")
 
-        if(type === "IN") {
-            product.stock += numericQuantity
-        }
-        else if (type === "OUT") {
-            if(product.stock < numericQuantity){
-                throw new Error("Stock insuficiente para realizar la salida")
+            const numericQuantity = parseInt(quantity, 10);
+            if (isNaN(numericQuantity) || numericQuantity <= 0) {
+                throw new Error("La cantidad debe ser un número válido mayor a cero");
             }
 
-            product.stock -= numericQuantity
-        }
-        else {
-            throw new Error("El movimiento solicitado no es valido:(IN o OUT)")
-        }
+            if(type === "IN") {
+                await Products.increment('stock', { by: numericQuantity, where: { id: product_id }, transaction: secureTransaction })
+            }
+            else if (type === "OUT") {
+                const currentStock = product.stock
+                if(currentStock < numericQuantity){
+                    throw new Error("Stock insuficiente para realizar la salida")
+                }
+                await Products.decrement('stock', { by: numericQuantity, where: { id: product_id }, transaction: secureTransaction })
+            }
+            else {
+                throw new Error("El movimiento solicitado no es valido:(IN o OUT)")
+            }
 
-        await product.save()
+            const movement = await InventoryMovement.create({
+                producto_id: product_id,
+                provider_id: provider_id || null,
+                tipo: type === "IN" ? "entrada" : "salida",
+                cantidad: numericQuantity
+            }, { transaction: secureTransaction })
 
-        return await InventoryMovement.create({
-            producto_id: product_id,
-            provider_id: provider_id || null,
-            tipo: type === "IN" ? "entrada" : "salida",
-            cantidad: numericQuantity
-        })
+            await secureTransaction.commit()
+            return movement
+
+        } catch (error) {
+            await secureTransaction.rollback()
+            throw error
+        }
     }
 
     // Obtiene movimientos de inventario paginados.

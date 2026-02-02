@@ -8,6 +8,8 @@ import { SaleItem } from "../../models/SaleItemModels.js";
 import { Sale } from "../../models/SaleModels.js";
 import { User } from "../../models/UserModels.js";
 
+const IVA_RATE = 1.19; // IVA 19% incluido en el precio
+
 class SaleServices{
 
     // Crea una nueva venta.
@@ -32,7 +34,7 @@ class SaleServices{
             }
 
             // Calcular subtotal e iva (Asumiendo IVA 19% incluido en el precio)
-            const subtotal = total / 1.19;
+            const subtotal = total / IVA_RATE;
             const iva = total - subtotal;
 
             // Crear la venta
@@ -50,7 +52,7 @@ class SaleServices{
 
             // Crear items de venta y actualizar inventario
             for(const item of items){
-                const product = await Products.findByPk(item.producto_id)
+                const product = await Products.findByPk(item.producto_id, { transaction: secureTransaction })
 
                 await SaleItem.create({
                     venta_id: sale.id,
@@ -62,9 +64,8 @@ class SaleServices{
                     transaction: secureTransaction
                 })
 
-                // Actualizar stock del producto
-                product.stock -= item.cantidad
-                await product.save({transaction: secureTransaction})
+                // Actualizar stock del producto usando decrement para evitar race conditions
+                await Products.decrement('stock', { by: item.cantidad, where: { id: item.producto_id }, transaction: secureTransaction })
 
                 // Registrar movimiento de inventario
                 await InventoryMovement.create({
@@ -76,7 +77,7 @@ class SaleServices{
                 {
                     transaction: secureTransaction
                 })
-            
+
             }
 
             await secureTransaction.commit()

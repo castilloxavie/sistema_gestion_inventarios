@@ -265,3 +265,11 @@ La API requiere un token JWT en la cabecera `Authorization` para las rutas prote
 | `GET`  | `/api/sales`                | Obtiene todas las ventas.          | `admin`, `vendedor`  |
 | `GET`  | `/api/sales/:id`            | Obtiene una venta por ID.          | `admin`              |
 | `POST` | `/api/sales`                | Crea una nueva venta.              | `admin`, `vendedor`  |
+| **Clients** |
+| `GET`  | `/api/clients`              | Obtiene todos los clientes.        | `admin`, `vendedor`  |
+| `GET`  | `/api/clients/documento/:documento` | Obtiene un cliente por documento.  | `admin`, `vendedor`  |
+| `POST` | `/api/clients`              | Crea un nuevo cliente.             | `admin`, `vendedor`  |
+| **Dashboard** |
+| `GET`  | `/api/dashboard`            | Obtiene el dashboard del administrador. | `admin`              |
+| `GET`  | `/api/dashboard/seller`     | Obtiene el dashboard del vendedor. | `admin`, `vendedor`  |
+| `GET`  | `/api/dashboard/export/:period/:format` | Exporta un reporte de ventas.     | `admin`              |
