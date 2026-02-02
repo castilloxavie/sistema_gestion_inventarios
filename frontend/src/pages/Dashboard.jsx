@@ -66,7 +66,7 @@ function SellerDashboard({ data }) {
         try {
             const response = await api.get('/sales');
             console.log('Sales fetched:', response.data);
-            setSales(response.data);
+            setSales(response.data.data || []);
         } catch (error) {
             console.error('Error fetching sales:', error);
         }

@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { User } from "../../models/UserModels.js";
 
 class UserServices {
@@ -17,18 +18,21 @@ class UserServices {
         })
     }
 
-    //crear usuario 
+    //crear usuario
     async create(data){
         const{nombre, apellido, email, password, rol} = data
 
         const isExsist = await User.findOne({where: {email}})
         if(isExsist) throw new Error("El correo ya existe registrado con este correo")
-        
+
+        // Encriptar contraseña por seguridad
+        const hashearPassword = await bcrypt.hash(password, 10)
+
         const user = await User.create({
-            nombre, 
+            nombre,
             apellido,
             email,
-            password,
+            password: hashearPassword,
             rol
         })
         console.log("Usuario creado correctamente");

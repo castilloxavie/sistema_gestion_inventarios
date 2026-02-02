@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, Users, ClipboardList, ShoppingCart, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, Users, ClipboardList, ShoppingCart, LogOut, UserCheck } from 'lucide-react';
 import { useAuth } from '../../auth/AuthContext';
 import './Layout.css';
 
@@ -21,7 +21,7 @@ export default function Sidebar() {
             <div className="sidebar-header">
                 <h2>Inventario</h2>
             </div>
-            
+
             <nav className="sidebar-nav">
                 <Link to="/dashboard" className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}>
                     <LayoutDashboard size={20} />
@@ -31,8 +31,8 @@ export default function Sidebar() {
                     <Package size={20} />
                     <span>Productos</span>
                 </Link>
-                
-                {/* Solo Admin ve Proveedores e Inventario detallado */}
+
+                {/* Solo Admin ve Proveedores, Inventario detallado y Usuarios */}
                 {user?.rol === 'admin' && (
                     <>
                         <Link to="/providers" className={`nav-item ${isActive('/providers') ? 'active' : ''}`}>
@@ -42,6 +42,10 @@ export default function Sidebar() {
                         <Link to="/inventory" className={`nav-item ${isActive('/inventory') ? 'active' : ''}`}>
                             <ClipboardList size={20} />
                             <span>Inventario</span>
+                        </Link>
+                        <Link to="/users" className={`nav-item ${isActive('/users') ? 'active' : ''}`}>
+                            <UserCheck size={20} />
+                            <span>Usuarios</span>
                         </Link>
                     </>
                 )}
