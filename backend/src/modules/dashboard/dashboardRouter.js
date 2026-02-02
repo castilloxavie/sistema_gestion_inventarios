@@ -12,4 +12,7 @@ router.use(authMiddleware);
 router.get("/", roleMiddleware(["admin"]), (req, res) => dashboardController.getStart(req, res));
 router.get("/seller", roleMiddleware(["vendedor", "admin"]), (req, res) => dashboardController.getSellerDashboard(req, res));
 
+// Exportar reportes de ventas (solo admin)
+router.get("/export/:period/:format", roleMiddleware(["admin"]), (req, res) => dashboardController.exportSalesReport(req, res));
+
 export default router;

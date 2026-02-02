@@ -285,7 +285,7 @@ function SellerDashboard({ data }) {
 }
 
 function AdminDashboard({ data }) {
-    const { totals, charts, lowStockProducts } = data;
+    const { totals, charts, analytics, lowStockProducts } = data;
     const [showNotifications, setShowNotifications] = useState(false);
     const [showLowStockModal, setShowLowStockModal] = useState(false);
 
@@ -295,6 +295,27 @@ function AdminDashboard({ data }) {
             setShowLowStockModal(true);
         }
     }, [lowStockProducts]);
+
+    // Función para exportar reportes
+    const handleExport = async (format) => {
+        const period = document.getElementById('exportPeriod').value;
+        try {
+            const response = await api.get(`/dashboard/export/${period}/${format}`, {
+                responseType: 'blob'
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `reporte-ventas-${period}-${new Date().toISOString().split('T')[0]}.${format === 'pdf' ? 'pdf' : 'xlsx'}`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error al descargar el reporte:', error);
+            alert('Error al descargar el reporte. Verifica que haya ventas en el período seleccionado.');
+        }
+    };
 
     // Prepare chart data
     const topProductsData = charts.topProducts.map(item => ({
@@ -333,28 +354,45 @@ function AdminDashboard({ data }) {
             <div className="dashboard-container">
                 <div className="dashboard-header">
                     <h1>Panel de Administración</h1>
-                    <div className="notification-container">
-                        <button
-                            className="notification-bell"
-                            onClick={() => setShowNotifications(!showNotifications)}
-                        >
-                            <Bell size={24} />
-                            {lowStockProducts && lowStockProducts.length > 0 && (
-                                <span className="notification-badge">{lowStockProducts.length}</span>
+                    <div className="header-actions">
+                        <div className="export-section">
+                            <select id="exportPeriod" className="export-select">
+                                <option value="weekly-current">Semana Actual</option>
+                                <option value="weekly-all">Todas las Semanas</option>
+                                <option value="monthly">Mensual</option>
+                                <option value="yearly">Anual</option>
+                            </select>
+                            <button onClick={() => handleExport('pdf')} className="btn btn-secondary">
+                                <FileText size={20} />
+                                Exportar PDF
+                            </button>
+                            <button onClick={() => handleExport('excel')} className="btn btn-secondary">
+                                Exportar Excel
+                            </button>
+                        </div>
+                        <div className="notification-container">
+                            <button
+                                className="notification-bell"
+                                onClick={() => setShowNotifications(!showNotifications)}
+                            >
+                                <Bell size={24} />
+                                {lowStockProducts && lowStockProducts.length > 0 && (
+                                    <span className="notification-badge">{lowStockProducts.length}</span>
+                                )}
+                            </button>
+                            {showNotifications && lowStockProducts && lowStockProducts.length > 0 && (
+                                <div className="notification-dropdown">
+                                    <h4>Productos con Stock Bajo</h4>
+                                    {lowStockProducts.map((product) => (
+                                        <div key={product.id} className="notification-item">
+                                            <strong>{product.nombre}</strong><br />
+                                            Código: {product.codigo}<br />
+                                            Stock: {product.stock}
+                                        </div>
+                                    ))}
+                                </div>
                             )}
-                        </button>
-                        {showNotifications && lowStockProducts && lowStockProducts.length > 0 && (
-                            <div className="notification-dropdown">
-                                <h4>Productos con Stock Bajo</h4>
-                                {lowStockProducts.map((product) => (
-                                    <div key={product.id} className="notification-item">
-                                        <strong>{product.nombre}</strong><br />
-                                        Código: {product.codigo}<br />
-                                        Stock: {product.stock}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                        </div>
                     </div>
                 </div>
 
