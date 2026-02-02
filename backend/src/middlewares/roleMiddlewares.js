@@ -1,3 +1,4 @@
+// Middleware para verificar roles de usuario.
 export function roleMiddleware(rolesPermitidos = []){
     return(req, res, next) => {
         const rolUsuario = req.user.rol

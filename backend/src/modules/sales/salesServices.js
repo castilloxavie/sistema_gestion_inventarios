@@ -9,6 +9,8 @@ import { Sale } from "../../models/SaleModels.js";
 import { User } from "../../models/UserModels.js";
 
 class SaleServices{
+
+    // Crea una nueva venta.
     async createSale(data) {
         const {usuario_id, items, metodo_pago, cliente_id} = data
 
@@ -87,6 +89,7 @@ class SaleServices{
         }
     }
 
+    // Obtiene ventas paginadas con filtros.
     async getAllSales (page = 1, limit = 20, userId = null, userRole = null) {
         const parsedPage = parseInt(page, 10) || 1;
         const parsedLimit = parseInt(limit, 10) || 20;
@@ -132,6 +135,7 @@ class SaleServices{
         };
     }
 
+    // Obtiene venta por ID con permisos.
     async getSaleById (id, userId = null, userRole = null) {
         let where = { id };
         if (userRole !== 'admin') {
@@ -161,6 +165,7 @@ class SaleServices{
         return sale
     }
 
+    // Genera PDF de venta.
     async generateSalePDF(saleId, userId, userRole) {
         const sale = await this.getSaleById(saleId, userId, userRole);
         if (!sale) throw new Error('Venta no encontrada');

@@ -4,7 +4,7 @@ import "./src/models/index.js"
 import dotenv from "dotenv"
 dotenv.config()
 
-
+// Inicia el servidor y configura la base de datos.
 async function star() {
     try {
         await sequelize.authenticate()

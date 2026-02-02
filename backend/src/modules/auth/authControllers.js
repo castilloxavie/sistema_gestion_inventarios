@@ -2,6 +2,7 @@ import authServices from "./authServices.js";
 
 class AuthController {
 
+    // Registra un nuevo usuario.
     async register(req, res) {
         try {
             //crear usuario correctamente

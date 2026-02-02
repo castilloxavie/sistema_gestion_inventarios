@@ -3,6 +3,8 @@ import { where } from "sequelize";
 import { Provider } from "../../models/ProviderModels.js";
 
 class ProviderServices {
+
+    // Obtiene proveedores paginados.
     async getAllProviders(page = 1, limit = 20) {
         const parsedPage = parseInt(page);
         const parsedLimit = parseInt(limit);
@@ -29,6 +31,7 @@ class ProviderServices {
         };
     }
 
+    // Obtiene proveedor por ID.
     async getIdProviders(id) {
         return await Provider.findOne({
             where: {
@@ -38,6 +41,7 @@ class ProviderServices {
         })
     }
 
+    // Crea un nuevo proveedor.
     async createProviders(data) {
         const{nombre, telefono, email, direccion} = data
 
@@ -57,6 +61,7 @@ class ProviderServices {
         return providers
     }
 
+    // Actualiza un proveedor.
     async updateProviders(id, data) {
         const providers = await Provider.findOne({ where: { id: id, estado: 1 } })
         if(!providers) throw new Error("El proveedor no existe o está inactivo")
@@ -81,6 +86,7 @@ class ProviderServices {
         return providerUpdate
     }
 
+    // Elimina un proveedor.
     async deleteProviders(id) {
         const providers = await Provider.findByPk(id)
         if(!providers) throw new Error("El proveedor no existe")

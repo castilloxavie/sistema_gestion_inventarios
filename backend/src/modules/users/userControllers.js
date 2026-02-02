@@ -1,7 +1,8 @@
 import UserServices from "./userServices.js";
 
 class UserController {
-    
+
+    // Obtiene todos los usuarios.
     async getAll(req, res){
 
         try {
@@ -18,6 +19,7 @@ class UserController {
     }
 
 
+    // Obtiene usuario por ID.
     async getById(req, res){
 
         try {
@@ -34,6 +36,7 @@ class UserController {
     }
 
 
+    // Crea un nuevo usuario.
     async create(req, res){
 
         try {
@@ -50,6 +53,7 @@ class UserController {
     }
 
 
+    // Actualiza un usuario.
     async update(req, res){
 
         try {
@@ -66,7 +70,8 @@ class UserController {
     }
 
 
-async delete(req, res){
+    // Elimina un usuario.
+    async delete(req, res){
 
         try {
             const user = await UserServices.delete(req.params.id)

@@ -1,6 +1,8 @@
 import ProductServices from "./productServices.js";
 
 class ProductControllers {
+
+    // Obtiene todos los productos paginados.
     async getAllProduct(req, res) {
         try {
             const { search, page = 1, limit = 20 } = req.query;
@@ -14,6 +16,7 @@ class ProductControllers {
         }
     }
 
+    // Obtiene producto por ID.
     async getByIdProduct(req, res) {
         try {
             const product = await ProductServices.getByIdProduct(req.params.id)
@@ -26,6 +29,7 @@ class ProductControllers {
         }
     }
 
+    // Crea un nuevo producto.
     async createProduct(req, res){
         try {
             console.log("Request body:", req.body);
@@ -42,6 +46,7 @@ class ProductControllers {
         }
     }
 
+    // Actualiza un producto.
     async updateProduct(req, res) {
         try {
             const product = await ProductServices.updateProduct(req.params.id, req.body)
@@ -54,6 +59,7 @@ class ProductControllers {
         }
     }
 
+    // Elimina un producto.
     async deleteProduct(req, res) {
         try {
             const product = await ProductServices.deleteProduct(req.params.id)

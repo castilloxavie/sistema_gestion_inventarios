@@ -10,6 +10,8 @@ import { Sale } from "../../models/SaleModels.js";
 import { User } from "../../models/UserModels.js";
 
 class DashBoardServices {
+
+    // Obtiene estadísticas iniciales.
     async getStarts () {
         const totalProducts = await Products.count()
         const totalProviders = await Provider.count()
@@ -79,6 +81,7 @@ class DashBoardServices {
         }
     }
 
+    // Obtiene estadísticas del vendedor.
     async getSellerStats(userId) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);

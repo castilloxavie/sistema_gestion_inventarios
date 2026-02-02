@@ -1,6 +1,8 @@
 import clientsServices from "./clientsServices.js";
 
 class ClientController {
+
+    // Crea un nuevo cliente.
     async create(req, res) {
         try {
             const client = await clientsServices.createClient(req.body);
@@ -10,6 +12,7 @@ class ClientController {
         }
     }
 
+    // Obtiene todos los clientes.
     async getAll(req, res) {
         try {
             const clients = await clientsServices.getAllClients();

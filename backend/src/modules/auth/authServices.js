@@ -5,6 +5,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 class AuthServices {
+    // Registra un nuevo usuario en la base de datos.
     async register(data){
         const {nombre, apellido, email, password, rol = "vendedor"} = data
 

@@ -2,6 +2,7 @@ import SalesServices from "./salesServices.js";
 
 class SaleController {
 
+    // Crea una nueva venta.
     async create(req, res){
         try {
              const sale = await SalesServices.createSale(req.body)
@@ -15,6 +16,7 @@ class SaleController {
 
     }
 
+    // Obtiene ventas paginadas.
     async getSale(req, res) {
         try {
             const userId = req.user?.id;
@@ -30,6 +32,7 @@ class SaleController {
         }
     }
 
+    // Obtiene venta por ID.
     async getSaleById (req, res) {
         try {
             const userId = req.user?.id;
@@ -44,6 +47,7 @@ class SaleController {
         }
     }
 
+    // Genera PDF de venta.
     async generatePDF(req, res) {
         try {
             const userId = req.user?.id;

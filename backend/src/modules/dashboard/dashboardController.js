@@ -1,6 +1,8 @@
 import DashBoardServices from "./dashboardServices.js"
 
 class DashboardController {
+
+    // Obtiene estadísticas iniciales del dashboard.
     async getStart(req, res) {
         try {
             const data = await DashBoardServices.getStarts()

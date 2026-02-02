@@ -2,6 +2,7 @@ import InventoryServices from "./inventoryServices.js"
 
 class InventoryController {
 
+    // Crea un nuevo movimiento de inventario.
     async create(req, res) {
         try {
             const inventory = await InventoryServices.createInventory(req.body)
@@ -15,6 +16,7 @@ class InventoryController {
         }
     }
 
+    // Obtiene todos los movimientos de inventario.
     async getAll(req, res) {
         try {
             const { page = 1, limit = 20 } = req.query;
@@ -29,6 +31,7 @@ class InventoryController {
         }
     }
 
+    // Obtiene movimiento de inventario por ID.
     async getById(req, res) {
         try {
             const inventory = await InventoryServices.getMovementById(req.params.id)

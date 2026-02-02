@@ -3,12 +3,13 @@ import { Products } from "../../models/ProductsModels.js"
 import { Provider } from "../../models/ProviderModels.js"
 
 class InventoryServices {
+    // Crea un movimiento de inventario.
     async createInventory(data){
         const {product_id, provider_id, type, quantity } = data
 
         const product = await Products.findByPk(product_id)
         if(!product) throw new Error("El producto no existe")
-        
+
         const numericQuantity = parseInt(quantity, 10);
         if (isNaN(numericQuantity) || numericQuantity <= 0) {
             throw new Error("La cantidad debe ser un número válido mayor a cero");
@@ -38,6 +39,7 @@ class InventoryServices {
         })
     }
 
+    // Obtiene movimientos de inventario paginados.
     async getMovement(page = 1, limit = 20) {
         const parsedPage = parseInt(page, 10) || 1;
         const parsedLimit = parseInt(limit, 10) || 20;
@@ -66,6 +68,7 @@ class InventoryServices {
         };
     }
 
+    // Obtiene movimiento de inventario por ID.
     async getMovementById(id){
         return await InventoryMovement.findByPk(id, {
             include: [

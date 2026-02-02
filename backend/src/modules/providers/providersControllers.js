@@ -1,6 +1,8 @@
 import ProviderServices from "./providersServices.js";
 
 class ProviderController {
+
+    // Obtiene todos los proveedores paginados.
     async getAllProvider(req, res){
         try {
             const { page = 1, limit = 20 } = req.query;
@@ -14,6 +16,7 @@ class ProviderController {
         }
     }
 
+    // Obtiene proveedor por ID.
     async getByProvider(req, res){
         try {
             const providers = await ProviderServices.getIdProviders(req.params.id)
@@ -25,6 +28,7 @@ class ProviderController {
         }
     }
 
+    // Crea un nuevo proveedor.
     async createProvider(req, res){
         try {
             const providers = await ProviderServices.createProviders(req.body)
@@ -37,6 +41,7 @@ class ProviderController {
         }
     }
 
+    // Actualiza un proveedor.
     async updateProvider(req, res){
         try {
             const providers = await ProviderServices.updateProviders(req.params.id, req.body)
@@ -50,6 +55,7 @@ class ProviderController {
         
     }
 
+    // Elimina un proveedor.
     async deleteProvider(req, res) {
         try {
             const providers = await ProviderServices.deleteProviders(req.params.id)
