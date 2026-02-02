@@ -3,9 +3,10 @@ import ProviderServices from "./providersServices.js";
 class ProviderController {
     async getAllProvider(req, res){
         try {
-            const providers = await ProviderServices.getAllProviders()
+            const { page = 1, limit = 20 } = req.query;
+            const result = await ProviderServices.getAllProviders(parseInt(page), parseInt(limit))
             console.log("Se obtuvo todos los Provedores");
-            res.json(providers)
+            res.json(result)
 
         } catch (error) {
             console.log("Error al mostrar todos los Provedores", error.message);

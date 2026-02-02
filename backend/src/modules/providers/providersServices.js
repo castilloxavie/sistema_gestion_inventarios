@@ -3,12 +3,30 @@ import { where } from "sequelize";
 import { Provider } from "../../models/ProviderModels.js";
 
 class ProviderServices {
-    async getAllProviders() {
-        return await Provider.findAll({
+    async getAllProviders(page = 1, limit = 20) {
+        const parsedPage = parseInt(page);
+        const parsedLimit = parseInt(limit);
+        const offset = (parsedPage - 1) * parsedLimit;
+
+        const { count, rows } = await Provider.findAndCountAll({
             where: {
                 estado: 1
+            },
+            limit: parsedLimit,
+            offset
+        });
+
+        const totalPages = Math.ceil(count / parsedLimit);
+
+        return {
+            data: rows,
+            pagination: {
+                total: count,
+                page: parsedPage,
+                limit: parsedLimit,
+                totalPages
             }
-        })
+        };
     }
 
     async getIdProviders(id) {

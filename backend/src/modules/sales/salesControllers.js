@@ -19,9 +19,10 @@ class SaleController {
         try {
             const userId = req.user?.id;
             const userRole = req.user?.rol;
-            const sales = await SalesServices.getAllSales(userId, userRole)
+            const { page = 1, limit = 20 } = req.query;
+            const result = await SalesServices.getAllSales(page, limit, userId, userRole)
             console.log("Se obtuvieron las Ventas");
-            res.json(sales)
+            res.json(result)
 
         } catch (error) {
             console.log("Error no se pudieron obtener las ventas", error.message);

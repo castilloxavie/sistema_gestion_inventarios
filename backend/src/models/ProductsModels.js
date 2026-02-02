@@ -3,10 +3,10 @@ import { DataTypes } from "sequelize"
 import { sequelize } from "../config/databases.js"
 
 export const Products = sequelize.define(
-    "Product",
+    "Products",
     {
         nombre:{type: DataTypes.STRING, allowNull: false},
-        codigo: {type: DataTypes.STRING, allowNull: false, unique: true},
+        codigo: {type: DataTypes.STRING, allowNull: false},
         categoria: {type: DataTypes.STRING},
         precio: {type: DataTypes.DECIMAL(10,2), allowNull: false},
         stock: {type: DataTypes.INTEGER, defaultValue: 0},

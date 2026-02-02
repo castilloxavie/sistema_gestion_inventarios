@@ -3,18 +3,18 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
+import api from '../api/axios';
 import { useAuth } from '../auth/AuthContext';
 import { useDashboard } from '../auth/DashboardContext';
+import ClientManagement from '../components/dashboard/ClientManagement';
+import PerformanceMetrics from '../components/dashboard/PerformanceMetrics';
+import SellerTools from '../components/dashboard/SellerTools';
 import Layout from '../components/layout/Layout';
 import Modal from '../components/Modal';
-import PerformanceMetrics from '../components/dashboard/PerformanceMetrics';
-import ClientManagement from '../components/dashboard/ClientManagement';
-import SellerTools from '../components/dashboard/SellerTools';
-import api from '../api/axios';
 
+import '../styles/ClientManagement.css';
 import '../styles/Dashboard.css';
 import '../styles/PerformanceMetrics.css';
-import '../styles/ClientManagement.css';
 import '../styles/SellerTools.css';
 
 export default function Dashboard() {
@@ -398,18 +398,24 @@ function AdminDashboard({ data }) {
                         <div className="chart-header">
                             <h3 className="chart-title">Productos Más Vendidos</h3>
                         </div>
-                        <div style={{ height: 300 }}>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={topProductsData}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                    <XAxis dataKey="name" fontSize={12} tickMargin={10} />
-                                    <YAxis fontSize={12} />
-                                    <Tooltip 
-                                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-                                    />
-                                    <Bar dataKey="ventas" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
+                        <div style={{ width: '100%', height: 300 }}>
+                            {topProductsData.length > 0 ? (
+                                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+                                    <BarChart data={topProductsData}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                        <XAxis dataKey="name" fontSize={12} tickMargin={10} />
+                                        <YAxis fontSize={12} />
+                                        <Tooltip
+                                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+                                        />
+                                        <Bar dataKey="ventas" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                    <p>No hay datos disponibles</p>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -417,31 +423,37 @@ function AdminDashboard({ data }) {
                         <div className="chart-header">
                             <h3 className="chart-title">Ventas Últimos 7 Días</h3>
                         </div>
-                        <div style={{ height: 300 }}>
-                            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                                <AreaChart data={salesTrendData}>
-                                    <defs>
-                                        <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.1}/>
-                                            <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                    <XAxis dataKey="date" fontSize={12} tickMargin={10} />
-                                    <YAxis fontSize={12} />
-                                    <Tooltip 
-                                        formatter={(value) => [`$${value.toLocaleString()}`, 'Ventas']}
-                                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-                                    />
-                                    <Area 
-                                        type="monotone" 
-                                        dataKey="total" 
-                                        stroke="#22c55e" 
-                                        fillOpacity={1} 
-                                        fill="url(#colorTotal)" 
-                                    />
-                                </AreaChart>
-                            </ResponsiveContainer>
+                        <div style={{ width: '100%', height: 300 }}>
+                            {salesTrendData.length > 0 ? (
+                                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+                                    <AreaChart data={salesTrendData}>
+                                        <defs>
+                                            <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#22c55e" stopOpacity={0.1}/>
+                                                <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                        <XAxis dataKey="date" fontSize={12} tickMargin={10} />
+                                        <YAxis fontSize={12} />
+                                        <Tooltip
+                                            formatter={(value) => [`$${value.toLocaleString()}`, 'Ventas']}
+                                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+                                        />
+                                        <Area
+                                            type="monotone"
+                                            dataKey="total"
+                                            stroke="#22c55e"
+                                            fillOpacity={1}
+                                            fill="url(#colorTotal)"
+                                        />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                    <p>No hay datos disponibles</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

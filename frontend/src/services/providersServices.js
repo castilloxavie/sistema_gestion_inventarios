@@ -1,7 +1,7 @@
 import api from "../api/axios";
 
-export const getProviders = async () => {
-    const { data } = await api.get("/providers");
+export const getProviders = async (page = 1, limit = 20) => {
+    const { data } = await api.get(`/providers?page=${page}&limit=${limit}`);
     return data;
 };
 

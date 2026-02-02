@@ -1,5 +1,5 @@
 import { InventoryMovement } from "../../models/InventoryMovementModels.js"
-import { Products } from "../../models/ProducsModels.js"
+import { Products } from "../../models/ProductsModels.js"
 import { Provider } from "../../models/ProviderModels.js"
 
 class InventoryServices {
@@ -38,13 +38,32 @@ class InventoryServices {
         })
     }
 
-    async getMovement(){
-        return await InventoryMovement.findAll({
+    async getMovement(page = 1, limit = 20) {
+        const parsedPage = parseInt(page, 10) || 1;
+        const parsedLimit = parseInt(limit, 10) || 20;
+        const offset = (parsedPage - 1) * parsedLimit;
+
+        const { count, rows } = await InventoryMovement.findAndCountAll({
             include: [
                 {model: Products, attributes: ["nombre", "precio", "stock"], include: [{model: Provider, attributes: ["nombre"]}]},
                 {model: Provider, attributes: ["nombre"]}
-            ]
-        })
+            ],
+            limit: parsedLimit,
+            offset,
+            order: [['createdAt', 'DESC']]
+        });
+
+        const totalPages = Math.ceil(count / parsedLimit);
+
+        return {
+            data: rows,
+            pagination: {
+                total: count,
+                page: parsedPage,
+                limit: parsedLimit,
+                totalPages
+            }
+        };
     }
 
     async getMovementById(id){

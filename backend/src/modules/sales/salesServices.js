@@ -1,11 +1,12 @@
+import PDFDocument from 'pdfkit';
+
 import { sequelize } from "../../config/databases.js";
 import { Client } from "../../models/ClientModels.js";
 import { InventoryMovement } from "../../models/InventoryMovementModels.js";
-import { Products } from "../../models/ProducsModels.js";
+import { Products } from "../../models/ProductsModels.js";
 import { SaleItem } from "../../models/SaleItemModels.js";
 import { Sale } from "../../models/SaleModels.js";
 import { User } from "../../models/UserModels.js";
-import PDFDocument from 'pdfkit';
 
 class SaleServices{
     async createSale(data) {
@@ -86,8 +87,18 @@ class SaleServices{
         }
     }
 
-    async getAllSales () {
-        return await Sale.findAll({
+    async getAllSales (page = 1, limit = 20, userId = null, userRole = null) {
+        const parsedPage = parseInt(page, 10) || 1;
+        const parsedLimit = parseInt(limit, 10) || 20;
+        const offset = (parsedPage - 1) * parsedLimit;
+
+        let where = {};
+        if (userRole !== 'admin') {
+            where.usuario_id = userId;
+        }
+
+        const { count, rows } = await Sale.findAndCountAll({
+            where,
             include: [
                 {
                     model: SaleItem,
@@ -101,13 +112,34 @@ class SaleServices{
                     model: Client,
                     attributes: ["nombre", "apellido", "documento"]
                 }
-                
-            ]
-        })
+
+            ],
+            limit: parsedLimit,
+            offset,
+            order: [['createdAt', 'DESC']]
+        });
+
+        const totalPages = Math.ceil(count / parsedLimit);
+
+        return {
+            data: rows,
+            pagination: {
+                total: count,
+                page: parsedPage,
+                limit: parsedLimit,
+                totalPages
+            }
+        };
     }
 
-    async getSaleById (id) {
-        const sale = await Sale.findByPk(id, {
+    async getSaleById (id, userId = null, userRole = null) {
+        let where = { id };
+        if (userRole !== 'admin') {
+            where.usuario_id = userId;
+        }
+
+        const sale = await Sale.findOne({
+            where,
             include: [
                 {
                     model: SaleItem,
@@ -123,12 +155,14 @@ class SaleServices{
                 }
             ]
         })
+
+        if (!sale) throw new Error("Venta no encontrada o no tiene permisos para verla");
 
         return sale
     }
 
-    async generateSalePDF(saleId) {
-        const sale = await this.getSaleById(saleId);
+    async generateSalePDF(saleId, userId, userRole) {
+        const sale = await this.getSaleById(saleId, userId, userRole);
         if (!sale) throw new Error('Venta no encontrada');
 
         const doc = new PDFDocument({ margin: 50 });

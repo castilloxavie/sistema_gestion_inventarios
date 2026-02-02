@@ -11,7 +11,10 @@ async function star() {
         console.log("Conexion a la base de datos exitosa")
 
         if(process.env.NODE_ENV === 'development'){
-            await sequelize.sync({alter: true})
+            // alter: true intenta actualizar la estructura de la tabla, pero puede causar duplicidad de índices
+            // Se cambia a false para evitar el error "Too many keys"
+            // Si necesitas recrear las tablas por completo, usa { force: true } (¡CUIDADO: BORRA DATOS!)
+            await sequelize.sync({alter: false})
             console.log("Tablas sincronizadas correctamente");
         } else {
             console.log("Modo producción - sincronización de tablas desactivada");

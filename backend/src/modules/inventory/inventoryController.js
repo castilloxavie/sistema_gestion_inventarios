@@ -17,9 +17,10 @@ class InventoryController {
 
     async getAll(req, res) {
         try {
-            const inventory = await InventoryServices.getMovement()
+            const { page = 1, limit = 20 } = req.query;
+            const result = await InventoryServices.getMovement(page, limit)
             console.log("Se obtuvieron correctamente los movimientos de inventario");
-            return res.json(inventory)
+            return res.json(result)
 
         } catch (error) {
             console.log("Error: no se pudieron obtener los movimientos de inventario", error.message);

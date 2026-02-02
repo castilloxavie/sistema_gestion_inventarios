@@ -8,14 +8,37 @@ import "../../styles/inventory.css"
 
 export default function InventoryList() {
     const [movements, setMovements] = useState([]);
+    const [pagination, setPagination] = useState({});
+    const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        getInventoryMovements()
-            .then(setMovements)
-            .finally(() => setLoading(false));
-    }, []);
+        fetchMovements(page);
+    }, [page]);
+
+    const fetchMovements = async (currentPage) => {
+        setLoading(true);
+        try {
+            const data = await getInventoryMovements(currentPage, 20);
+            console.log('Inventory data:', data);
+            if (Array.isArray(data)) {
+                setMovements(data);
+                setPagination({ totalPages: 1, page: 1, total: data.length });
+            } else {
+                setMovements(data.data || []);
+                setPagination(data.pagination || {});
+            }
+        } catch (err) {
+            console.error('Error fetching inventory:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+    };
 
     if (loading) return <div className="loading-container"><p>Cargando inventario...</p></div>;
 
@@ -60,6 +83,24 @@ export default function InventoryList() {
                     </tbody>
                 </table>
             </div>
+
+            {pagination.totalPages > 1 && (
+                <div className="pagination">
+                    <button
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 1}
+                    >
+                        Anterior
+                    </button>
+                    <span>Página {page} de {pagination.totalPages}</span>
+                    <button
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page === pagination.totalPages}
+                    >
+                        Siguiente
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

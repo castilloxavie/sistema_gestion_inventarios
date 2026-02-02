@@ -1,7 +1,7 @@
 import api from "../api/axios";
 
-export const getInventoryMovements = async () => {
-    const { data } = await api.get("/inventory");
+export const getInventoryMovements = async (page = 1, limit = 20) => {
+    const { data } = await api.get(`/inventory?page=${page}&limit=${limit}`);
     return data;
 };
 

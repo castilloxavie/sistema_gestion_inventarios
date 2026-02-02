@@ -1,10 +1,15 @@
 import { Op } from "sequelize";
 
+import { sequelize } from "../../config/databases.js";
 import { InventoryMovement } from "../../models/InventoryMovementModels.js"
-import { Products } from "../../models/ProducsModels.js"
+import { Products } from "../../models/ProductsModels.js"
 
 class ProductServices {
-    async getAllProduct(search = null) {
+    async getAllProduct(search = null, page = 1, limit = 20) {
+        // Asegurar que page y limit sean números válidos
+        const pageNum = Math.max(1, parseInt(page) || 1);
+        const limitNum = Math.max(1, parseInt(limit) || 20);
+        
         let whereCondition = { estado: 1 };
 
         if (search) {
@@ -17,9 +22,25 @@ class ProductServices {
             };
         }
 
-        return await Products.findAll({
-            where: whereCondition
-        })
+        const offset = (pageNum - 1) * limitNum;
+
+        const { count, rows } = await Products.findAndCountAll({
+            where: whereCondition,
+            limit: limitNum,
+            offset
+        });
+
+        const totalPages = Math.ceil(count / limitNum);
+
+        return {
+            data: rows,
+            pagination: {
+                total: count,
+                page: pageNum,
+                limit: limitNum,
+                totalPages
+            }
+        };
     }
 
     async getByIdProduct(id) {
@@ -33,37 +54,52 @@ class ProductServices {
     }
 
     async createProducto(data) {
-
         const {nombre, codigo, categoria, precio, stock, proveedor_id} = data
-
-        //validar si el producto ya existe mediante código
-        const isExists = await Products.findOne({where: {codigo: codigo}})
-        if(isExists) throw new Error("El producto ya existe creado")
         
-        const product = await Products.create({
-            nombre,
-            codigo,
-            categoria,
-            precio,
-            stock,
-            proveedor_id,
-            estado: 1
-        })
+        // Iniciar transacción para asegurar integridad de datos
+        const transaction = await sequelize.transaction();
 
-        // Crear movimiento de inventario si hay stock inicial
-        if (stock > 0) {
-            await InventoryMovement.create({
-                producto_id: product.id,
-                provider_id: proveedor_id || null,
-                tipo: "entrada",
-                cantidad: stock,
-                descripcion: "Stock inicial al crear producto"
-            })
+        try {
+            //validar si el producto ya existe mediante código
+            const isExists = await Products.findOne({where: {codigo: codigo}, transaction})
+            if(isExists) {
+                throw new Error("El producto ya existe con ese código")
+            }
+            
+            const product = await Products.create({
+                nombre,
+                codigo,
+                categoria,
+                precio,
+                stock,
+                proveedor_id,
+                estado: 1
+            }, { transaction })
+
+            // Crear movimiento de inventario si hay stock inicial
+            if (stock > 0) {
+                await InventoryMovement.create({
+                    producto_id: product.id,
+                    provider_id: proveedor_id || null,
+                    tipo: "entrada",
+                    cantidad: stock,
+                    descripcion: "Stock inicial al crear producto"
+                }, { transaction })
+            }
+
+            // Confirmar transacción
+            await transaction.commit();
+
+            console.log("Producto creado correctamente:", product.id);
+            return product;
+
+        } catch (error) {
+            // Revertir cambios si hay error
+            await transaction.rollback();
+            throw error;
         }
-
-        console.log("Producto creado correctamente:", product);
-        return product
     }
+
 
     async updateProduct(id, data){
         const product = await Products.findByPk(id)

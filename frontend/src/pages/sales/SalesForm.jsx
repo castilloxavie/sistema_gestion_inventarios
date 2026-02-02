@@ -33,7 +33,15 @@ export default function SalesForm() {
     ]);
 
     useEffect(() => {
-        getProducts().then(setProducts);
+        getProducts()
+            .then(data => {
+                console.log('Products data:', data);
+                setProducts(data.data || data);
+            })
+            .catch(err => {
+                console.error('Error loading products:', err);
+                setError('Error al cargar productos: ' + (err.response?.data?.error || err.message));
+            });
     }, []);
 
     // Buscar cliente

@@ -11,18 +11,21 @@ import "../../styles/produc.css";
 
 export default function ProductList() {
     const [products, setProducts] = useState([]);
+    const [pagination, setPagination] = useState({});
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [page, setPage] = useState(1);
     const navigate = useNavigate();
     const { user } = useAuth();
     const { fetchDashboardData } = useDashboard();
 
-    const loadProducts = async (searchTerm = "") => {
+    const loadProducts = async (searchTerm = "", currentPage = 1) => {
         try {
-            const data = await getProducts(searchTerm ? { search: searchTerm } : {});
-            setProducts(data);
+            const response = await getProducts(searchTerm ? { search: searchTerm, page: currentPage } : { page: currentPage });
+            setProducts(response.data);
+            setPagination(response.pagination);
         } finally {
             setLoading(false);
         }
@@ -40,8 +43,10 @@ export default function ProductList() {
         }
 
         try {
-            const results = await getProducts({ search });
-            setSearchResults(results);
+            const response = await getProducts({ search });
+            // Manejar respuesta paginada o array simple
+            const results = response.data || response;
+            setSearchResults(Array.isArray(results) ? results : []);
             setIsModalOpen(true);
             setSearch(""); // Limpiar el input después de la búsqueda exitosa
         } catch (error) {
@@ -53,6 +58,11 @@ export default function ProductList() {
         if (e.key === "Enter") {
             handleSearch();
         }
+    };
+
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+        loadProducts("", newPage);
     };
 
     if (loading) return (
@@ -132,7 +142,7 @@ export default function ProductList() {
                                                 }
                                                 try {
                                                     await deleteProduct(p.id);
-                                                    await loadProducts(); // Recargar la lista de productos
+                                                    await loadProducts("", page); // Recargar la lista de productos
                                                     await fetchDashboardData(); // Recargar los datos del dashboard
                                                 } catch (error) {
                                                     console.error("Error al eliminar el producto:", error);
@@ -148,6 +158,24 @@ export default function ProductList() {
                     </tbody>
                 </table>
             </div>
+
+            {pagination.totalPages > 1 && (
+                <div className="pagination">
+                    <button
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 1}
+                    >
+                        Anterior
+                    </button>
+                    <span>Página {page} de {pagination.totalPages}</span>
+                    <button
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page === pagination.totalPages}
+                    >
+                        Siguiente
+                    </button>
+                </div>
+            )}
 
             {/* Modal para resultados de búsqueda */}
             <Modal

@@ -29,8 +29,8 @@ export default function InventoryForm() {
     });
 
     useEffect(() => {
-        getProducts().then(setProducts);
-        getProviders().then(setProviders);
+        getProducts().then(response => setProducts(response.data || []));
+        getProviders().then(data => setProviders(data.data || []));
     }, []);
 
     const handleChange = (e) => {

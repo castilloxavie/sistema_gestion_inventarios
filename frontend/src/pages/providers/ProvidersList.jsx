@@ -1,18 +1,33 @@
-import { useState, useEffect } from 'react';
-import { getProviders, deleteProvider } from '../../services/providersServices';
-import { useNavigate } from 'react-router-dom';
-import "../../styles/providers.css"
 import { Home } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { deleteProvider, getProviders } from '../../services/providersServices';
+
+import "../../styles/providers.css"
 
 export default function ProviderList() {
     const [providers, setProviders] = useState([]);
+    const [pagination, setPagination] = useState({});
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
     const navigate = useNavigate();
 
-    const loadProviders = async () => {
+    const loadProviders = async (currentPage = 1) => {
         try {
-            const data = await getProviders();
-            setProviders(data);
+            const response = await getProviders(currentPage);
+            if (response.data && Array.isArray(response.data)) {
+                setProviders(response.data);
+                setPagination(response.pagination || {});
+            } else if (Array.isArray(response)) {
+                setProviders(response);
+                setPagination({});
+            } else {
+                setProviders([]);
+            }
+        } catch (error) {
+            console.error("Error cargando proveedores:", error);
+            setProviders([]);
         } finally {
             setLoading(false);
         }
@@ -25,7 +40,12 @@ export default function ProviderList() {
     const handleDelete = async (id) => {
         if (!confirm("¿Eliminar proveedor?")) return;
         await deleteProvider(id);
-        loadProviders();
+        loadProviders(page);
+    };
+
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+        loadProviders(newPage);
     };
 
     if (loading) return <p>Cargando proveedores...</p>;
@@ -82,6 +102,24 @@ export default function ProviderList() {
                     </tbody>
                 </table>
             </div>
+
+            {pagination.totalPages > 1 && (
+                <div className="pagination">
+                    <button
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 1}
+                    >
+                        Anterior
+                    </button>
+                    <span>Página {page} de {pagination.totalPages}</span>
+                    <button
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page === pagination.totalPages}
+                    >
+                        Siguiente
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

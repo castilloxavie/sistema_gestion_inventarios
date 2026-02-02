@@ -1,5 +1,5 @@
 import { InventoryMovement } from "./InventoryMovementModels.js"
-import { Products } from "./ProducsModels.js"
+import { Products } from "./ProductsModels.js"
 import { Provider } from "./ProviderModels.js"
 import { SaleItem } from "./SaleItemModels.js"
 import { Sale } from "./SaleModels.js"

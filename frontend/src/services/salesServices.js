@@ -1,7 +1,7 @@
 import api from "../api/axios"
 
-export const getSale = async () => {
-    const { data } = await api.get("/sales")
+export const getSale = async (page = 1, limit = 20) => {
+    const { data } = await api.get(`/sales?page=${page}&limit=${limit}`)
     return data
 }
 

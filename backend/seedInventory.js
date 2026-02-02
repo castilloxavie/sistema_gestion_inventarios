@@ -1,6 +1,6 @@
 import { sequelize } from "./src/config/databases.js";
 import { InventoryMovement } from "./src/models/InventoryMovementModels.js";
-import { Products } from "./src/models/ProducsModels.js";
+import { Products } from "./src/models/ProductsModels.js";
 import { Provider } from "./src/models/ProviderModels.js";
 import { User } from "./src/models/UserModels.js";
 

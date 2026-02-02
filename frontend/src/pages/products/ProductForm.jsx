@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { useDashboard } from "../../auth/DashboardContext";
 import { createProduct, getProductById, updateProduct } from "../../services/productServices";
 import { getProviders } from "../../services/providersServices";
-import { useDashboard } from "../../auth/DashboardContext";
 
 import "../../styles/produc.css";
 
@@ -25,7 +25,7 @@ export default function ProductForm() {
     useEffect(() => {
         // Fetch providers when component mounts
         getProviders()
-            .then(data => setProviders(data))
+            .then(data => setProviders(data.data || []))
             .catch(error => console.error("Error fetching providers:", error));
 
         if (id) {
@@ -52,12 +52,17 @@ export default function ProductForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Ensure empty string is sent as null if no provider is selected
         const payload = {
             ...form,
             proveedor_id: form.proveedor_id || null
         };
+
+        // Remove categoria if it's empty to avoid validation issues
+        if (!payload.categoria.trim()) {
+            delete payload.categoria;
+        }
 
         try {
             if (id) {

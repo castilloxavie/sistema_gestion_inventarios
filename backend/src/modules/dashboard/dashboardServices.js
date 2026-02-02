@@ -3,7 +3,7 @@ import { Op } from "sequelize";
 import { sequelize } from "../../config/databases.js";
 import { Client } from "../../models/ClientModels.js";
 import { InventoryMovement } from "../../models/InventoryMovementModels.js";
-import  { Products }  from "../../models/ProducsModels.js";
+import  { Products }  from "../../models/ProductsModels.js";
 import { Provider } from "../../models/ProviderModels.js";
 import { SaleItem } from "../../models/SaleItemModels.js";
 import { Sale } from "../../models/SaleModels.js";
